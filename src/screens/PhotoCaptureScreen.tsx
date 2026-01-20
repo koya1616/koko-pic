@@ -19,20 +19,10 @@ const PhotoCaptureScreen: React.FC<{
 	request: Request | null;
 }> = ({ navigateTo, request }) => {
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);
-	const [_usingLibrary, setUsingLibrary] = useState(false);
-
 	const handleCapture = () => {
 		// Simulate capturing an image
 		setCapturedImage(
 			"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9NTAgeT01NSBmb250LXNpemU9MTIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzAwMCI+UGhvdG88L3RleHQ+PC9zdmc+",
-		);
-	};
-
-	const handleSelectFromLibrary = () => {
-		// Simulate selecting from library
-		setUsingLibrary(true);
-		setCapturedImage(
-			"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgZmlsbD0iI2ZmZDAwMCIvPjx0ZXh0IHg9NTAgeT01NSBmb250LXNpemU9MTIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzAwMCI+RnJvbSBMaWI8L3RleHQ+PC9zdmc+",
 		);
 	};
 
@@ -83,20 +73,13 @@ const PhotoCaptureScreen: React.FC<{
 			</div>
 
 			{/* Action Buttons */}
-			<div className="grid grid-cols-2 gap-3 mb-4">
+			<div className="mb-4">
 				<button
 					type="button"
-					className="py-3 bg-gray-200 rounded-lg font-medium flex items-center justify-center"
+					className="w-full py-3 bg-gray-200 rounded-lg font-medium flex items-center justify-center"
 					onClick={handleCapture}
 				>
 					📷 撮影する
-				</button>
-				<button
-					type="button"
-					className="py-3 bg-gray-200 rounded-lg font-medium flex items-center justify-center"
-					onClick={handleSelectFromLibrary}
-				>
-					🖼️ ライブラリから選ぶ
 				</button>
 			</div>
 
