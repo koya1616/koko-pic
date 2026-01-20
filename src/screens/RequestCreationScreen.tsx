@@ -48,15 +48,6 @@ const RequestCreationScreen: React.FC<{
 				<h1 className="text-lg font-semibold">依頼を作成</h1>
 			</header>
 
-			{/* Map Preview */}
-			<div className="bg-gray-200 rounded-lg h-40 mb-4 flex items-center justify-center">
-				<div className="text-gray-500">[ 地図（小） ]</div>
-				<div
-					className="absolute bg-indigo-600 w-6 h-6 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-					style={{ left: "50%", top: "50%" }}
-				></div>
-			</div>
-
 			{/* Location Input */}
 			<div className="mb-4">
 				<label
