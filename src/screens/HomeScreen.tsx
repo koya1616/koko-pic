@@ -1,5 +1,4 @@
 import type React from "react";
-import { useState } from "react";
 
 // Mock data for requests
 const mockRequests = [
@@ -51,9 +50,6 @@ interface Request {
 const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
-	const [showList, setShowList] = useState(false);
-	const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
-
 	const getStatusColor = (status: string) => {
 		switch (status) {
 			case "open":
@@ -85,97 +81,44 @@ const HomeScreen: React.FC<{
 				</div>
 			</header>
 
-			{/* Map Area */}
-			<div className="flex-1 relative bg-gray-200">
-				{/* Mock map with pins */}
-				<div className="absolute inset-0 bg-blue-100 flex items-center justify-center">
-					<div className="text-gray-500">🌍 地図（フル画面）</div>
-				</div>
-
-				{/* Mock pins for requests */}
+			{/* Request List */}
+			<div className="flex-1 overflow-y-auto p-4 space-y-3">
+				<h2 className="font-semibold text-gray-700">近くの依頼一覧</h2>
 				{mockRequests.map((request) => (
-					<button
+					<div
 						key={request.id}
-						className={`absolute ${getStatusColor(request.status)} w-6 h-6 rounded-full flex items-center justify-center text-white text-xs transform -translate-x-1/2 -translate-y-1/2 cursor-pointer`}
-						style={{
-							left: `${20 + request.id * 20}%`,
-							top: `${30 + request.id * 15}%`,
-						}}
-						onClick={() => setSelectedRequest(request)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								setSelectedRequest(request);
-							}
-						}}
-						type="button"
+						className="p-4 border rounded-xl bg-white shadow-sm"
 					>
-						●
-					</button>
-				))}
-
-				{/* Current location indicator */}
-				<div
-					className="absolute bg-blue-500 w-4 h-4 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-					style={{ left: "50%", top: "50%" }}
-				></div>
-			</div>
-
-			{/* Request List Panel */}
-			<div
-				className={`bg-white shadow-lg transition-transform duration-300 ${showList ? "h-2/5" : "h-1/5"}`}
-			>
-				<button
-					className="flex justify-center py-2 cursor-pointer"
-					onClick={() => setShowList(!showList)}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") {
-							setShowList(!showList);
-						}
-					}}
-					type="button"
-				>
-					<div className="w-12 h-1 bg-gray-300 rounded-full"></div>
-				</button>
-
-				<div className="px-4 pb-4">
-					<h2 className="font-semibold mb-2">
-						{showList ? "近くの依頼一覧" : "📍 近くの依頼一覧 ▼"}
-					</h2>
-
-					{showList && (
-						<div className="space-y-2 max-h-40 overflow-y-auto">
-							{mockRequests.map((request) => (
-								<button
-									key={request.id}
-									className="p-3 border rounded-lg flex justify-between items-center bg-white shadow-sm w-full text-left"
-									onClick={() => {
-										setSelectedRequest(request);
-										navigateTo("photo-capture", request);
-									}}
-									onKeyDown={(e) => {
-										if (e.key === "Enter" || e.key === " ") {
-											setSelectedRequest(request);
-											navigateTo("photo-capture", request);
-										}
-									}}
-									type="button"
-								>
-									<div>
-										<div className="font-medium">
-											{request.title}（¥{request.reward}）
-										</div>
-										<div className="text-sm text-gray-500">
-											距離: {request.distance}m
-										</div>
-									</div>
-									<div
-										className={`w-3 h-3 rounded-full ${getStatusColor(request.status)}`}
-									></div>
-								</button>
-							))}
+						<div className="flex justify-between items-start">
+							<div>
+								<div className="font-semibold">
+									{request.title}
+									<span className="ml-2 text-sm text-gray-500">
+										（¥{request.reward}）
+									</span>
+								</div>
+								<p className="text-sm text-gray-600 mt-1">
+									{request.description}
+								</p>
+							</div>
+							<span
+								className={`w-3 h-3 rounded-full mt-1 ${getStatusColor(request.status)}`}
+								role="img"
+								aria-label={request.status}
+							></span>
 						</div>
-					)}
-				</div>
+						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
+							<span>距離: {request.distance}m</span>
+							<button
+								type="button"
+								className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm"
+								onClick={() => navigateTo("photo-capture", request)}
+							>
+								撮影する
+							</button>
+						</div>
+					</div>
+				))}
 			</div>
 
 			{/* Floating Action Button */}
@@ -186,43 +129,6 @@ const HomeScreen: React.FC<{
 			>
 				➕
 			</button>
-
-			{/* Selected Request Popup */}
-			{selectedRequest && (
-				<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-10">
-					<div className="bg-white rounded-xl p-6 w-full max-w-sm">
-						<h3 className="font-bold text-lg mb-2">{selectedRequest.title}</h3>
-						<p className="text-gray-600 mb-4">{selectedRequest.description}</p>
-						<div className="flex justify-between items-center mb-4">
-							<span className="text-indigo-600 font-semibold">
-								報酬: ¥{selectedRequest.reward}
-							</span>
-							<span className="text-gray-500">
-								距離: {selectedRequest.distance}m
-							</span>
-						</div>
-						<div className="flex space-x-3">
-							<button
-								type="button"
-								className="flex-1 py-2 bg-gray-200 rounded-lg"
-								onClick={() => setSelectedRequest(null)}
-							>
-								閉じる
-							</button>
-							<button
-								type="button"
-								className="flex-1 py-2 bg-indigo-600 text-white rounded-lg"
-								onClick={() => {
-									navigateTo("photo-capture", selectedRequest);
-									setSelectedRequest(null);
-								}}
-							>
-								撮影する
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
 		</div>
 	);
 };
