@@ -50,19 +50,6 @@ interface Request {
 const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
-	const getStatusColor = (status: string) => {
-		switch (status) {
-			case "open":
-				return "bg-status-open"; // 受付中 (Blue)
-			case "in-progress":
-				return "bg-status-in-progress"; // 対応中 (Orange)
-			case "completed":
-				return "bg-status-completed"; // 写真到着 (Green)
-			default:
-				return "bg-status-open";
-		}
-	};
-
 	return (
 		<div className="flex flex-col h-full bg-gray-50">
 			{/* Header */}
@@ -101,11 +88,6 @@ const HomeScreen: React.FC<{
 									{request.description}
 								</p>
 							</div>
-							<span
-								className={`w-3 h-3 rounded-full mt-1 ${getStatusColor(request.status)}`}
-								role="img"
-								aria-label={request.status}
-							></span>
 						</div>
 						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
 							<span>距離: {request.distance}m</span>
