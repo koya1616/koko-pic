@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 const RequestCreationScreen: React.FC<{ navigateTo: (screen: any) => void }> = ({ navigateTo }) => {
   const [location, setLocation] = useState('渋谷駅前'); // Mock location
