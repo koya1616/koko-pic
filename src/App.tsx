@@ -1,50 +1,55 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import React, { useState } from 'react';
+import HomeScreen from './screens/HomeScreen';
+import RequestCreationScreen from './screens/RequestCreationScreen';
+import PhotoCaptureScreen from './screens/PhotoCaptureScreen';
+
+// Define the screen types
+type Screen = 'home' | 'request-creation' | 'photo-capture' | 'submission-complete';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  const navigateTo = (screen: Screen, request?: any) => {
+    setCurrentScreen(screen);
+    if (request) {
+      setSelectedRequest(request);
+    }
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'home':
+        return <HomeScreen navigateTo={navigateTo} />;
+      case 'request-creation':
+        return <RequestCreationScreen navigateTo={navigateTo} />;
+      case 'photo-capture':
+        return <PhotoCaptureScreen navigateTo={navigateTo} request={selectedRequest} />;
+      case 'submission-complete':
+        return (
+          <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-4">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+              <div className="text-green-500 text-6xl mb-4">✅</div>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">送信完了</h1>
+              <p className="text-gray-600 mb-6">「依頼者の確認を待っています」</p>
+              <button
+                onClick={() => navigateTo('home')}
+                className="bg-indigo text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors w-full"
+              >
+                ホームへ戻る
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return <HomeScreen navigateTo={navigateTo} />;
+    }
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <div className="h-screen w-screen overflow-hidden">
+      {renderScreen()}
+    </div>
   );
 }
 
