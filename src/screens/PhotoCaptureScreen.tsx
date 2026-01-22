@@ -116,20 +116,24 @@ const PhotoCaptureScreen: React.FC<{
 			</header>
 
 			{/* Camera Preview */}
-			<div className="flex-1 relative bg-gray-200 rounded-lg mb-4">
+			<div className="flex-1 relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
 				{capturedImage ? (
-					<img
-						src={capturedImage}
-						alt="Captured"
-						className="w-full h-full object-cover rounded-lg"
-					/>
+					<div className="aspect-video w-full max-h-full flex items-center justify-center">
+						<img
+							src={capturedImage}
+							alt="Captured"
+							className="w-full h-full object-cover rounded-lg"
+						/>
+					</div>
 				) : cameraStream ? (
-					<video
-						ref={videoRef}
-						className="w-full h-full object-cover rounded-lg"
-						playsInline
-						muted
-					/>
+					<div className="aspect-video w-full max-h-full flex items-center justify-center">
+						<video
+							ref={videoRef}
+							className="w-full h-full object-cover rounded-lg"
+							playsInline
+							muted
+						/>
+					</div>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
 						<div className="text-gray-500">[ カメラプレビュー（全画面） ]</div>
