@@ -115,66 +115,71 @@ const PhotoCaptureScreen: React.FC<{
 				</h1>
 			</header>
 
-			{/* Camera Preview */}
-			<div className="flex-1 relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
-				{capturedImage ? (
-					<div className="aspect-video w-full max-h-full flex items-center justify-center">
-						<img
-							src={capturedImage}
-							alt="Captured"
-							className="w-full h-full object-cover rounded-lg"
-						/>
-					</div>
-				) : cameraStream ? (
-					<div className="aspect-video w-full max-h-full flex items-center justify-center">
-						<video
-							ref={videoRef}
-							className="w-full h-full object-cover rounded-lg"
-							playsInline
-							muted
-						/>
-					</div>
-				) : (
-					<div className="w-full h-full flex items-center justify-center">
-						<div className="text-gray-500">[ カメラプレビュー（全画面） ]</div>
+			<div className="flex flex-col flex-1 min-h-0">
+				{/* Camera Preview - Only show when camera is active */}
+				{(capturedImage || cameraStream) && (
+					<div className="flex-1 relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+						{capturedImage ? (
+							<div className="aspect-video w-full max-h-full flex items-center justify-center">
+								<img
+									src={capturedImage}
+									alt="Captured"
+									className="w-full h-full object-cover rounded-lg"
+								/>
+							</div>
+						) : cameraStream ? (
+							<div className="aspect-video w-full max-h-full flex items-center justify-center">
+								<video
+									ref={videoRef}
+									className="w-full h-full object-cover rounded-lg"
+									playsInline
+									muted
+								/>
+							</div>
+						) : null}
 					</div>
 				)}
-			</div>
 
-			{/* Hidden Canvas for Image Capture */}
-			<canvas ref={canvasRef} style={{ display: "none" }} />
+				{/* Hidden Canvas for Image Capture */}
+				<canvas ref={canvasRef} style={{ display: "none" }} />
 
-			{/* Request Info */}
-			<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
-				<div className="font-medium">
-					依頼内容：{request?.description || "依頼内容がありません"}
+				{/* Request Info */}
+				<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
+					<div className="font-medium">
+						依頼内容：{request?.description || "依頼内容がありません"}
+					</div>
 				</div>
-			</div>
 
-			{/* Action Buttons */}
-			<div className="mb-4">
+				{/* Action Buttons */}
+				<div className="mb-4">
+					<button
+						type="button"
+						className="w-full py-3 bg-gray-200 rounded-lg font-medium flex items-center justify-center"
+						onClick={handleCapture}
+					>
+						📷{" "}
+						{!cameraStream && !capturedImage
+							? "撮影開始"
+							: cameraStream
+								? "シャッター"
+								: "撮り直す"}
+					</button>
+				</div>
+
+				{/* Submit Button */}
 				<button
 					type="button"
-					className="w-full py-3 bg-gray-200 rounded-lg font-medium flex items-center justify-center"
-					onClick={handleCapture}
+					className={`py-3 rounded-lg font-medium flex items-center justify-center ${
+						capturedImage
+							? "bg-green-accent text-white hover:bg-green-600"
+							: "bg-gray-300 text-gray-500 cursor-not-allowed"
+					}`}
+					disabled={!capturedImage}
+					onClick={handleSubmit}
 				>
-					📷 {cameraStream ? "シャッター" : "撮影する"}
+					🚀 写真を送信
 				</button>
 			</div>
-
-			{/* Submit Button */}
-			<button
-				type="button"
-				className={`py-3 rounded-lg font-medium flex items-center justify-center ${
-					capturedImage
-						? "bg-green-accent text-white hover:bg-green-600"
-						: "bg-gray-300 text-gray-500 cursor-not-allowed"
-				}`}
-				disabled={!capturedImage}
-				onClick={handleSubmit}
-			>
-				🚀 写真を送信
-			</button>
 		</div>
 	);
 };
