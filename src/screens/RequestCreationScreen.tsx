@@ -10,16 +10,19 @@ type Screen =
 const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 }> = ({ navigateTo }) => {
-	const [location, setLocation] = useState("渋谷駅前"); // Mock location
-	const [requestText, setRequestText] = useState(
-		"駅前の混雑状況がわかる写真1枚ください",
-	);
+	const [requestText, setRequestText] = useState("");
 	const [options, setOptions] = useState({
 		noPeople: false,
 		todayOnly: false,
 	});
 
 	const handleSubmit = () => {
+		// Check if request content is not empty
+		if (!requestText.trim()) {
+			alert("依頼内容を入力してください");
+			return;
+		}
+
 		// In a real app, this would submit the request
 		// For now, we'll just navigate back to home
 		alert("依頼を投稿しました！");
@@ -40,24 +43,6 @@ const RequestCreationScreen: React.FC<{
 				<h1 className="text-lg font-semibold">依頼を作成</h1>
 			</header>
 
-			{/* Location Input */}
-			<div className="mb-4">
-				<label
-					htmlFor="location"
-					className="block text-sm font-medium text-gray-700 mb-1"
-				>
-					場所：
-				</label>
-				<input
-					id="location"
-					type="text"
-					value={location}
-					onChange={(e) => setLocation(e.target.value)}
-					className="w-full p-2 border border-gray-300 rounded-lg"
-					placeholder="場所を入力してください"
-				/>
-			</div>
-
 			{/* Request Content */}
 			<div className="mb-4">
 				<label
@@ -72,6 +57,7 @@ const RequestCreationScreen: React.FC<{
 					onChange={(e) => setRequestText(e.target.value)}
 					className="w-full p-2 border border-gray-300 rounded-lg h-20"
 					placeholder="依頼内容を入力してください"
+					required
 				/>
 			</div>
 
@@ -111,7 +97,7 @@ const RequestCreationScreen: React.FC<{
 				<button
 					type="button"
 					className="w-full py-3 bg-indigo-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-indigo-600 transition-colors"
-					onClick={() => handleSubmit()}
+					onClick={handleSubmit}
 				>
 					💳 依頼を投稿
 				</button>
