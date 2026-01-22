@@ -11,10 +11,6 @@ const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 }> = ({ navigateTo }) => {
 	const [requestText, setRequestText] = useState("");
-	const [options, setOptions] = useState({
-		noPeople: false,
-		todayOnly: false,
-	});
 
 	const handleSubmit = () => {
 		// Check if request content is not empty
@@ -60,37 +56,6 @@ const RequestCreationScreen: React.FC<{
 					required
 				/>
 			</div>
-
-			{/* Options */}
-			<fieldset className="mb-6">
-				<legend className="block text-sm font-medium text-gray-700 mb-1">
-					オプション
-				</legend>
-				<div className="space-y-2">
-					<label className="inline-flex items-center">
-						<input
-							type="checkbox"
-							checked={options.noPeople}
-							onChange={(e) =>
-								setOptions({ ...options, noPeople: e.target.checked })
-							}
-							className="form-checkbox h-4 w-4 text-indigo-600"
-						/>
-						<span className="ml-2">人物が写らない写真でOK</span>
-					</label>
-					<label className="inline-flex items-center">
-						<input
-							type="checkbox"
-							checked={options.todayOnly}
-							onChange={(e) =>
-								setOptions({ ...options, todayOnly: e.target.checked })
-							}
-							className="form-checkbox h-4 w-4 text-indigo-600"
-						/>
-						<span className="ml-2">今日撮影のみ</span>
-					</label>
-				</div>
-			</fieldset>
 
 			{/* Action Buttons */}
 			<div className="mt-auto space-y-3">
