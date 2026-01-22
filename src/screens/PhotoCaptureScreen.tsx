@@ -137,6 +137,9 @@ const PhotoCaptureScreen: React.FC<{
 				)}
 			</div>
 
+			{/* Hidden Canvas for Image Capture */}
+			<canvas ref={canvasRef} style={{ display: "none" }} />
+
 			{/* Request Info */}
 			<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
 				<div className="font-medium">
