@@ -5,7 +5,6 @@ const mockRequests = [
 	{
 		id: 1,
 		title: "駅前の混雑",
-		reward: 300,
 		distance: 120,
 		location: { lat: 35.6895, lng: 139.6917 },
 		status: "open", // 'open', 'in-progress', 'completed'
@@ -14,7 +13,6 @@ const mockRequests = [
 	{
 		id: 2,
 		title: "コンビニ前の様子",
-		reward: 200,
 		distance: 350,
 		location: { lat: 35.6905, lng: 139.6927 },
 		status: "open",
@@ -23,7 +21,6 @@ const mockRequests = [
 	{
 		id: 3,
 		title: "公園の桜",
-		reward: 500,
 		distance: 900,
 		location: { lat: 35.6885, lng: 139.6907 },
 		status: "in-progress",
@@ -40,7 +37,6 @@ type Screen =
 interface Request {
 	id: number;
 	title: string;
-	reward: number;
 	distance: number;
 	location: { lat: number; lng: number };
 	status: string;
@@ -78,12 +74,7 @@ const HomeScreen: React.FC<{
 					>
 						<div className="flex justify-between items-start">
 							<div>
-								<div className="font-semibold">
-									{request.title}
-									<span className="ml-2 text-sm text-gray-500">
-										（¥{request.reward}）
-									</span>
-								</div>
+								<div className="font-semibold">{request.title}</div>
 								<p className="text-sm text-gray-600 mt-1">
 									{request.description}
 								</p>

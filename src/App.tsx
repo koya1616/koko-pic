@@ -13,7 +13,6 @@ type Screen =
 interface Request {
 	id: number;
 	title: string;
-	reward: number;
 	distance: number;
 	location: { lat: number; lng: number };
 	status: string;

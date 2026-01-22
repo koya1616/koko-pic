@@ -14,23 +14,15 @@ const RequestCreationScreen: React.FC<{
 	const [requestText, setRequestText] = useState(
 		"駅前の混雑状況がわかる写真1枚ください",
 	);
-	const [reward, setReward] = useState(300);
-	const [otherReward, setOtherReward] = useState("");
 	const [options, setOptions] = useState({
 		noPeople: false,
 		todayOnly: false,
 	});
 
-	const handleSubmit = (free: boolean) => {
+	const handleSubmit = () => {
 		// In a real app, this would submit the request
 		// For now, we'll just navigate back to home
-		if (free) {
-			// Show mock ad completion
-			alert("広告視聴完了！依頼が無料で投稿されました！");
-		} else {
-			// Show payment confirmation
-			alert(`依頼を¥${reward}で投稿しました！`);
-		}
+		alert("依頼を投稿しました！");
 		navigateTo("home");
 	};
 
@@ -83,44 +75,6 @@ const RequestCreationScreen: React.FC<{
 				/>
 			</div>
 
-			{/* Reward Selection */}
-			<fieldset className="mb-4">
-				<legend className="block text-sm font-medium text-gray-700 mb-1">
-					報酬
-				</legend>
-				<div className="grid grid-cols-2 gap-2">
-					{[200, 300, 500].map((amount) => (
-						<label key={amount} className="inline-flex items-center">
-							<input
-								type="radio"
-								name="reward"
-								checked={reward === amount}
-								onChange={() => setReward(amount)}
-								className="form-radio h-4 w-4 text-indigo-600"
-							/>
-							<span className="ml-2">¥{amount}</span>
-						</label>
-					))}
-				</div>
-				<div className="mt-2 flex items-center">
-					<input
-						type="radio"
-						name="reward"
-						checked={reward === parseInt(otherReward, 10)}
-						onChange={() => setReward(parseInt(otherReward, 10) || 0)}
-						className="form-radio h-4 w-4 text-indigo-600"
-					/>
-					<span className="ml-2">その他</span>
-					<input
-						type="number"
-						value={otherReward}
-						onChange={(e) => setOtherReward(e.target.value)}
-						className="ml-2 w-20 p-1 border border-gray-300 rounded"
-						placeholder="金額"
-					/>
-				</div>
-			</fieldset>
-
 			{/* Options */}
 			<fieldset className="mb-6">
 				<legend className="block text-sm font-medium text-gray-700 mb-1">
@@ -156,17 +110,10 @@ const RequestCreationScreen: React.FC<{
 			<div className="mt-auto space-y-3">
 				<button
 					type="button"
-					className="w-full py-3 bg-green-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-green-600 transition-colors"
-					onClick={() => handleSubmit(true)}
-				>
-					🎬 広告を見て無料で依頼
-				</button>
-				<button
-					type="button"
 					className="w-full py-3 bg-indigo-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-indigo-600 transition-colors"
-					onClick={() => handleSubmit(false)}
+					onClick={() => handleSubmit()}
 				>
-					💳 今すぐ依頼（¥{reward || parseInt(otherReward, 10) || 300}）
+					💳 依頼を投稿
 				</button>
 			</div>
 		</div>

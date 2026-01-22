@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface Request {
 	id: number;
 	title: string;
-	reward: number;
 	description: string;
 }
 
@@ -142,9 +141,6 @@ const PhotoCaptureScreen: React.FC<{
 			<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
 				<div className="font-medium">
 					依頼内容：{request?.description || "依頼内容がありません"}
-				</div>
-				<div className="text-indigo-500 font-semibold">
-					報酬：¥{request?.reward || 0}
 				</div>
 			</div>
 
