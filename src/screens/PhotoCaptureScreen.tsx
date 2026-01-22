@@ -120,7 +120,7 @@ const PhotoCaptureScreen: React.FC<{
 				{(capturedImage || cameraStream) && (
 					<div className="flex-1 relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
 						{capturedImage ? (
-							<div className="aspect-video w-full max-h-full flex items-center justify-center">
+							<div className="aspect-video w-full h-full flex items-center justify-center">
 								<img
 									src={capturedImage}
 									alt="Captured"
@@ -128,7 +128,7 @@ const PhotoCaptureScreen: React.FC<{
 								/>
 							</div>
 						) : cameraStream ? (
-							<div className="aspect-video w-full max-h-full flex items-center justify-center">
+							<div className="aspect-video w-full h-full flex items-center justify-center">
 								<video
 									ref={videoRef}
 									className="w-full h-full object-cover rounded-lg"
