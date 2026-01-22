@@ -54,7 +54,7 @@ const HomeScreen: React.FC<{
 		<div className="flex flex-col h-full bg-gray-50">
 			{/* Header */}
 			<header className="bg-white shadow-sm p-4 flex justify-between items-center">
-				<h1 className="text-xl font-bold text-indigo">KokoPic</h1>
+				<h1 className="text-xl font-bold text-indigo-500">KokoPic</h1>
 				<div className="flex space-x-4">
 					<button type="button" className="relative">
 						<span className="text-gray-600">🔔</span>
@@ -93,7 +93,7 @@ const HomeScreen: React.FC<{
 							<span>距離: {request.distance}m</span>
 							<button
 								type="button"
-								className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm"
+								className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600 transition-colors"
 								onClick={() => navigateTo("photo-capture", request)}
 							>
 								撮影する
@@ -106,7 +106,7 @@ const HomeScreen: React.FC<{
 			{/* Floating Action Button */}
 			<button
 				type="button"
-				className="absolute bottom-20 right-4 bg-indigo text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg text-xl hover:bg-indigo-700 transition-colors"
+				className="absolute bottom-20 right-4 bg-indigo-500 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg text-xl hover:bg-indigo-700 transition-colors"
 				onClick={() => navigateTo("request-creation")}
 			>
 				➕

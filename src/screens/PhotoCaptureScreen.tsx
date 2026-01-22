@@ -143,7 +143,7 @@ const PhotoCaptureScreen: React.FC<{
 				<div className="font-medium">
 					依頼内容：{request?.description || "依頼内容がありません"}
 				</div>
-				<div className="text-indigo font-semibold">
+				<div className="text-indigo-500 font-semibold">
 					報酬：¥{request?.reward || 0}
 				</div>
 			</div>

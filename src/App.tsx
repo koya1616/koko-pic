@@ -49,7 +49,7 @@ function App() {
 					<div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-4">
 						<div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
 							<div className="text-green-500 text-6xl mb-4">✅</div>
-							<h1 className="text-2xl font-bold text-gray-800 mb-2">
+							<h1 className="text-2xl font-bold text-gray-900 mb-2">
 								送信完了
 							</h1>
 							<p className="text-gray-600 mb-6">
@@ -58,7 +58,7 @@ function App() {
 							<button
 								type="button"
 								onClick={() => navigateTo("home")}
-								className="bg-indigo text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors w-full"
+								className="bg-indigo-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors w-full"
 							>
 								ホームへ戻る
 							</button>

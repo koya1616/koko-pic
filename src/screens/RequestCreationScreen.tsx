@@ -156,14 +156,14 @@ const RequestCreationScreen: React.FC<{
 			<div className="mt-auto space-y-3">
 				<button
 					type="button"
-					className="w-full py-3 bg-green-accent text-white rounded-lg font-medium flex items-center justify-center"
+					className="w-full py-3 bg-green-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-green-600 transition-colors"
 					onClick={() => handleSubmit(true)}
 				>
 					🎬 広告を見て無料で依頼
 				</button>
 				<button
 					type="button"
-					className="w-full py-3 bg-indigo text-white rounded-lg font-medium flex items-center justify-center"
+					className="w-full py-3 bg-indigo-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-indigo-600 transition-colors"
 					onClick={() => handleSubmit(false)}
 				>
 					💳 今すぐ依頼（¥{reward || parseInt(otherReward, 10) || 300}）
