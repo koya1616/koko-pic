@@ -1,11 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "submission-complete";
+type Screen = "home" | "request-creation" | "photo-capture";
 
 const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;

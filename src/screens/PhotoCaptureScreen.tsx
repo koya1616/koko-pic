@@ -7,16 +7,13 @@ interface Request {
 	description: string;
 }
 
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "submission-complete";
+type Screen = "home" | "request-creation" | "photo-capture";
 
 const PhotoCaptureScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 	request: Request | null;
-}> = ({ navigateTo, request }) => {
+	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
+}> = ({ navigateTo, request, showSnackbar }) => {
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);
 	const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
 	const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -79,8 +76,8 @@ const PhotoCaptureScreen: React.FC<{
 	};
 
 	const handleSubmit = () => {
-		// Navigate to submission complete screen
-		navigateTo("submission-complete");
+		showSnackbar("写真が正常に送信されました", "success");
+		navigateTo("home");
 	};
 
 	useEffect(() => {

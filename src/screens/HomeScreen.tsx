@@ -28,11 +28,7 @@ const mockRequests = [
 	},
 ];
 
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "submission-complete";
+type Screen = "home" | "request-creation" | "photo-capture";
 
 interface Request {
 	id: number;

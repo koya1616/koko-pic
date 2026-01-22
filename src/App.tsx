@@ -2,13 +2,10 @@ import { useState } from "react";
 import HomeScreen from "./screens/HomeScreen";
 import RequestCreationScreen from "./screens/RequestCreationScreen";
 import PhotoCaptureScreen from "./screens/PhotoCaptureScreen";
+import Snackbar from "./components/Snackbar";
 
 // Define the screen types
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "submission-complete";
+type Screen = "home" | "request-creation" | "photo-capture";
 
 interface Request {
 	id: number;
@@ -22,12 +19,35 @@ interface Request {
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<Screen>("home");
 	const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+	const [snackbar, setSnackbar] = useState({
+		isVisible: false,
+		message: "",
+		type: "success" as "success" | "error" | "info",
+	});
 
 	const navigateTo = (screen: Screen, request?: Request) => {
 		setCurrentScreen(screen);
 		if (request) {
 			setSelectedRequest(request);
 		}
+	};
+
+	const showSnackbar = (
+		message: string,
+		type: "success" | "error" | "info" = "success",
+	) => {
+		setSnackbar({
+			isVisible: true,
+			message,
+			type,
+		});
+	};
+
+	const hideSnackbar = () => {
+		setSnackbar((prev) => ({
+			...prev,
+			isVisible: false,
+		}));
 	};
 
 	const renderScreen = () => {
@@ -41,28 +61,8 @@ function App() {
 					<PhotoCaptureScreen
 						navigateTo={navigateTo}
 						request={selectedRequest}
+						showSnackbar={showSnackbar}
 					/>
-				);
-			case "submission-complete":
-				return (
-					<div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-4">
-						<div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-							<div className="text-green-500 text-6xl mb-4">✅</div>
-							<h1 className="text-2xl font-bold text-gray-900 mb-2">
-								送信完了
-							</h1>
-							<p className="text-gray-600 mb-6">
-								「依頼者の確認を待っています」
-							</p>
-							<button
-								type="button"
-								onClick={() => navigateTo("home")}
-								className="bg-indigo-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors w-full"
-							>
-								ホームへ戻る
-							</button>
-						</div>
-					</div>
 				);
 			default:
 				return <HomeScreen navigateTo={navigateTo} />;
@@ -70,7 +70,15 @@ function App() {
 	};
 
 	return (
-		<div className="h-screen w-screen overflow-hidden">{renderScreen()}</div>
+		<div className="h-screen w-screen overflow-hidden">
+			{renderScreen()}
+			<Snackbar
+				message={snackbar.message}
+				isVisible={snackbar.isVisible}
+				onClose={hideSnackbar}
+				type={snackbar.type}
+			/>
+		</div>
 	);
 }
 
