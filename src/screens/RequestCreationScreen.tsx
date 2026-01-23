@@ -13,7 +13,7 @@ import { geoErrorToMessage } from "../utils/geolocation";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
-const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
+const FALLBACK_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
 const MAP_STYLE_URL =
 	"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 type MapLabelLanguage = "ja" | "en";
@@ -74,6 +74,7 @@ const RequestCreationScreen: React.FC<{
 		null,
 	);
 	const [isSearching, setIsSearching] = useState(false);
+	const [defaultCenter, setDefaultCenter] = useState<LatLng>(FALLBACK_CENTER);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const markerRef = useRef<maplibregl.Marker | null>(null);
@@ -130,7 +131,7 @@ const RequestCreationScreen: React.FC<{
 			return;
 		}
 
-		const center = selectedLocation ?? DEFAULT_CENTER;
+		const center = selectedLocation ?? defaultCenter;
 		const map = new maplibregl.Map({
 			container: mapContainerRef.current,
 			style: MAP_STYLE_URL,
@@ -158,7 +159,44 @@ const RequestCreationScreen: React.FC<{
 		});
 
 		mapRef.current = map;
-	}, [isLocationEnabled, selectedLocation, mapLabelLanguage]);
+	}, [isLocationEnabled, selectedLocation, mapLabelLanguage, defaultCenter]);
+
+	useEffect(() => {
+		if (!isLocationEnabled) {
+			return;
+		}
+
+		if (!navigator.geolocation) {
+			setLocationError("この環境では位置情報が利用できません。");
+			return;
+		}
+
+		setLocationError(null);
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const currentLocation = {
+					lat: position.coords.latitude,
+					lng: position.coords.longitude,
+				};
+				setDefaultCenter(currentLocation);
+				setSelectedLocation((prev) =>
+					prev
+						? prev
+						: {
+								...currentLocation,
+								source: "gps",
+								accuracy: Math.round(position.coords.accuracy),
+								capturedAt: new Date().toISOString(),
+							},
+				);
+				setSelectedPlaceLabel(null);
+			},
+			(geoError) => {
+				setLocationError(geoErrorToMessage(geoError));
+			},
+			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+		);
+	}, [isLocationEnabled]);
 
 	useEffect(() => {
 		if (!mapRef.current) {
@@ -193,6 +231,16 @@ const RequestCreationScreen: React.FC<{
 		});
 	}, [selectedLocation]);
 
+	useEffect(() => {
+		if (!mapRef.current || selectedLocation) {
+			return;
+		}
+
+		mapRef.current.easeTo({
+			center: [defaultCenter.lng, defaultCenter.lat],
+		});
+	}, [defaultCenter, selectedLocation]);
+
 	const handleToggleLocation = () => {
 		setIsLocationEnabled((prev) => {
 			if (prev) {
@@ -204,32 +252,6 @@ const RequestCreationScreen: React.FC<{
 			}
 			return !prev;
 		});
-	};
-
-	const handleUseCurrentLocation = () => {
-		setLocationError(null);
-		setSearchError(null);
-		setSelectedPlaceLabel(null);
-		if (!navigator.geolocation) {
-			setLocationError("この環境では位置情報が利用できません。");
-			return;
-		}
-
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				setSelectedLocation({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-					source: "gps",
-					accuracy: Math.round(position.coords.accuracy),
-					capturedAt: new Date().toISOString(),
-				});
-			},
-			(geoError) => {
-				setLocationError(geoErrorToMessage(geoError));
-			},
-			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
-		);
 	};
 
 	const handleSearchLocation = async () => {
@@ -332,27 +354,6 @@ const RequestCreationScreen: React.FC<{
 
 				{isLocationEnabled && (
 					<div className="mt-3 space-y-2">
-						<div className="flex flex-wrap gap-2">
-							<button
-								type="button"
-								className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50"
-								onClick={handleUseCurrentLocation}
-							>
-								現在地を使用
-							</button>
-							<button
-								type="button"
-								className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50 disabled:text-gray-300"
-								onClick={() => {
-									setSelectedLocation(null);
-									setSelectedPlaceLabel(null);
-								}}
-								disabled={!selectedLocation}
-							>
-								ピンをクリア
-							</button>
-						</div>
-
 						<div className="rounded-md border border-gray-200 bg-gray-50 p-3">
 							<div className="text-xs font-medium text-gray-600">
 								場所を検索
