@@ -65,13 +65,6 @@ const HomeScreen: React.FC<{
 						</div>
 						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
 							<span>距離: {request.distance}m</span>
-							<button
-								type="button"
-								className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600 transition-colors"
-								onClick={() => navigateTo("photo-capture", request)}
-							>
-								撮影する
-							</button>
 						</div>
 					</div>
 				))}
