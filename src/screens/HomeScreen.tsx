@@ -164,7 +164,7 @@ const HomeScreen: React.FC<{
 				<h2 className="font-semibold text-gray-700">地図で見る</h2>
 				<div
 					ref={mapContainerRef}
-					className="mt-2 h-52 w-full overflow-hidden rounded-lg border border-gray-200 bg-white"
+					className="mt-2 h-80 w-full overflow-hidden rounded-lg border border-gray-200 bg-white"
 				/>
 				{selectedRequest ? (
 					<div className="mt-3">
