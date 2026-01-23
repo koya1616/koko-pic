@@ -41,6 +41,16 @@ const haversineMeters = (
 	return 2 * R * Math.asin(Math.sqrt(h));
 };
 
+const formatDistance = (meters: number) => {
+	if (meters >= 1000) {
+		const km = (meters / 1000).toFixed(1);
+		const trimmed = km.endsWith(".0") ? km.slice(0, -2) : km;
+		return `${trimmed}km`;
+	}
+
+	return `${meters}m`;
+};
+
 const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
@@ -121,7 +131,7 @@ const HomeScreen: React.FC<{
 						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
 							<span>
 								{request.distance !== undefined
-									? `距離: ${request.distance}m`
+									? `距離: ${formatDistance(request.distance)}`
 									: "距離: 取得できません"}
 							</span>
 						</div>
