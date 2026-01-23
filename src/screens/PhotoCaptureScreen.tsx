@@ -106,9 +106,7 @@ const PhotoCaptureScreen: React.FC<{
 				>
 					← 戻る
 				</button>
-				<h1 className="text-lg font-semibold">
-					撮影依頼：{request?.description || "依頼内容"}
-				</h1>
+				<h1 className="text-lg font-semibold">撮影依頼</h1>
 			</header>
 
 			<div className="flex flex-col flex-1 min-h-0">
