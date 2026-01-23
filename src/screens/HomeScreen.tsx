@@ -174,6 +174,7 @@ const HomeScreen: React.FC<{
 							<RequestCard
 								request={selectedRequest}
 								onSelect={(selected) => navigateTo("photo-capture", selected)}
+								className="border-sky-300"
 							/>
 						</div>
 					</div>

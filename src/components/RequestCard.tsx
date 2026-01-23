@@ -5,12 +5,17 @@ import type { Request } from "../types/request";
 type RequestCardProps = {
 	request: Request;
 	onSelect: (request: Request) => void;
+	className?: string;
 };
 
-const RequestCard: React.FC<RequestCardProps> = ({ request, onSelect }) => (
+const RequestCard: React.FC<RequestCardProps> = ({
+	request,
+	onSelect,
+	className,
+}) => (
 	<button
 		type="button"
-		className="p-4 border rounded-xl bg-white shadow-sm text-left w-full"
+		className={`p-4 border rounded-xl bg-white shadow-sm text-left w-full ${className ?? ""}`}
 		onClick={() => onSelect(request)}
 	>
 		<div className="flex justify-between items-start">
