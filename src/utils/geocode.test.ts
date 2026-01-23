@@ -26,7 +26,7 @@ describe("buildGeocodeUrl", () => {
 		expect(params.has("bounded")).toBe(false);
 	});
 
-	it("位置情報がある場合はviewboxとboundedを追加し、検索範囲を限定したURLを組み立てる", () => {
+	it("位置情報がある場合はviewboxを追加して近傍を優先したURLを組み立てる", () => {
 		const params = parseSearchParams(
 			buildGeocodeUrl({
 				query: "Cafe",
@@ -36,7 +36,7 @@ describe("buildGeocodeUrl", () => {
 		);
 
 		expect(params.get("accept-language")).toBe("ja");
-		expect(params.get("bounded")).toBe("1");
+		expect(params.has("bounded")).toBe(false);
 
 		const viewbox = params.get("viewbox");
 		expect(viewbox).not.toBeNull();
