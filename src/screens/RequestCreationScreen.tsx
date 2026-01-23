@@ -218,7 +218,7 @@ const RequestCreationScreen: React.FC<{
 		: "未設定";
 
 	return (
-		<div className="flex flex-col h-full bg-gray-50 p-4">
+		<div className="flex h-full flex-col overflow-y-auto bg-gray-50 p-4">
 			{/* Header */}
 			<header className="flex items-center mb-4">
 				<button
