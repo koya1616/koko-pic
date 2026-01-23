@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import type { Request, RequestLocation } from "../types/request";
 import RequestCard from "../components/RequestCard";
@@ -35,6 +35,7 @@ const HomeScreen: React.FC<{
 	const requestMarkersRef = useRef<maplibregl.Marker[]>([]);
 	const userMarkerRef = useRef<maplibregl.Marker | null>(null);
 	const hasCenteredOnUserRef = useRef(false);
+	const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
 	useEffect(() => {
 		if (!mapContainerRef.current || mapRef.current) {
@@ -84,10 +85,10 @@ const HomeScreen: React.FC<{
 					color: STATUS_COLORS[request.status] ?? STATUS_COLORS.open,
 				})
 					.setLngLat([request.location.lng, request.location.lat])
-					.setPopup(
-						new maplibregl.Popup({ offset: 12 }).setText(request.description),
-					)
 					.addTo(map);
+				marker.getElement().addEventListener("click", () => {
+					setSelectedRequest(request);
+				});
 				requestMarkersRef.current.push(marker);
 			}
 
@@ -155,6 +156,19 @@ const HomeScreen: React.FC<{
 					ref={mapContainerRef}
 					className="mt-2 h-52 w-full overflow-hidden rounded-lg border border-gray-200 bg-white"
 				/>
+				{selectedRequest ? (
+					<div className="mt-3">
+						<h3 className="text-sm font-semibold text-gray-600">
+							選択中の依頼
+						</h3>
+						<div className="mt-2">
+							<RequestCard
+								request={selectedRequest}
+								onSelect={(selected) => navigateTo("photo-capture", selected)}
+							/>
+						</div>
+					</div>
+				) : null}
 				{locationError && (
 					<div className="mt-2 text-xs text-gray-500">{locationError}</div>
 				)}
