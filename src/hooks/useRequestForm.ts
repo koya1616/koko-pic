@@ -5,12 +5,21 @@ type RequestFormOptions = {
 	onError: (message: string) => void;
 };
 
+export const getRequestTextError = (text: string) => {
+	if (!text.trim()) {
+		return "依頼内容を入力してください";
+	}
+
+	return null;
+};
+
 export const useRequestForm = ({ onSubmit, onError }: RequestFormOptions) => {
 	const [requestText, setRequestText] = useState("");
 
 	const handleSubmit = useCallback(() => {
-		if (!requestText.trim()) {
-			onError("依頼内容を入力してください");
+		const errorMessage = getRequestTextError(requestText);
+		if (errorMessage) {
+			onError(errorMessage);
 			return;
 		}
 
