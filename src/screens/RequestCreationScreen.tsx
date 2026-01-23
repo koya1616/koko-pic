@@ -7,6 +7,14 @@ import type { LatLng, RequestLocation } from "../types/request";
 type Screen = "home" | "request-creation" | "photo-capture";
 
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
+const GEOCODE_ENDPOINT =
+	"https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=";
+
+type GeocodeResult = {
+	display_name: string;
+	lat: string;
+	lon: string;
+};
 
 const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
@@ -16,6 +24,13 @@ const RequestCreationScreen: React.FC<{
 	const [selectedLocation, setSelectedLocation] =
 		useState<RequestLocation | null>(null);
 	const [locationError, setLocationError] = useState<string | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
+	const [searchError, setSearchError] = useState<string | null>(null);
+	const [selectedPlaceLabel, setSelectedPlaceLabel] = useState<string | null>(
+		null,
+	);
+	const [isSearching, setIsSearching] = useState(false);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const markerRef = useRef<maplibregl.Marker | null>(null);
@@ -69,6 +84,7 @@ const RequestCreationScreen: React.FC<{
 		);
 
 		map.on("click", (event) => {
+			setSelectedPlaceLabel(null);
 			setSelectedLocation({
 				lat: event.lngLat.lat,
 				lng: event.lngLat.lng,
@@ -110,6 +126,9 @@ const RequestCreationScreen: React.FC<{
 			if (prev) {
 				setSelectedLocation(null);
 				setLocationError(null);
+				setSearchError(null);
+				setSearchResults([]);
+				setSelectedPlaceLabel(null);
 			}
 			return !prev;
 		});
@@ -117,6 +136,8 @@ const RequestCreationScreen: React.FC<{
 
 	const handleUseCurrentLocation = () => {
 		setLocationError(null);
+		setSearchError(null);
+		setSelectedPlaceLabel(null);
 		if (!navigator.geolocation) {
 			setLocationError("この環境では位置情報が利用できません。");
 			return;
@@ -141,6 +162,55 @@ const RequestCreationScreen: React.FC<{
 			},
 			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
 		);
+	};
+
+	const handleSearchLocation = async () => {
+		const query = searchQuery.trim();
+		if (!query) {
+			setSearchError("検索キーワードを入力してください。");
+			setSearchResults([]);
+			return;
+		}
+
+		setSearchError(null);
+		setIsSearching(true);
+		try {
+			const response = await fetch(
+				`${GEOCODE_ENDPOINT}${encodeURIComponent(query)}`,
+			);
+			if (!response.ok) {
+				throw new Error("Geocoding failed.");
+			}
+			const results = (await response.json()) as GeocodeResult[];
+			setSearchResults(results);
+			if (results.length === 0) {
+				setSearchError("候補が見つかりませんでした。");
+			}
+		} catch {
+			setSearchError("検索に失敗しました。時間をおいて再度お試しください。");
+			setSearchResults([]);
+		} finally {
+			setIsSearching(false);
+		}
+	};
+
+	const handleSelectSearchResult = (result: GeocodeResult) => {
+		const lat = Number(result.lat);
+		const lng = Number(result.lon);
+		if (Number.isNaN(lat) || Number.isNaN(lng)) {
+			setSearchError("座標の取得に失敗しました。");
+			return;
+		}
+
+		setSelectedLocation({
+			lat,
+			lng,
+			source: "search",
+			capturedAt: new Date().toISOString(),
+		});
+		setSelectedPlaceLabel(result.display_name);
+		setSearchResults([]);
+		setSearchError(null);
 	};
 
 	const locationSummary = selectedLocation
@@ -211,11 +281,61 @@ const RequestCreationScreen: React.FC<{
 							<button
 								type="button"
 								className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50 disabled:text-gray-300"
-								onClick={() => setSelectedLocation(null)}
+								onClick={() => {
+									setSelectedLocation(null);
+									setSelectedPlaceLabel(null);
+								}}
 								disabled={!selectedLocation}
 							>
 								ピンをクリア
 							</button>
+						</div>
+
+						<div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+							<div className="text-xs font-medium text-gray-600">
+								場所を検索
+							</div>
+							<div className="mt-2 flex flex-wrap gap-2">
+								<input
+									type="text"
+									value={searchQuery}
+									onChange={(event) => setSearchQuery(event.target.value)}
+									onKeyDown={(event) => {
+										if (event.key === "Enter") {
+											event.preventDefault();
+											handleSearchLocation();
+										}
+									}}
+									placeholder="住所や施設名で検索"
+									className="flex-1 min-w-[180px] rounded-md border border-gray-200 px-3 py-2 text-sm"
+								/>
+								<button
+									type="button"
+									className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50 disabled:text-gray-300"
+									onClick={handleSearchLocation}
+									disabled={isSearching}
+								>
+									{isSearching ? "検索中..." : "検索"}
+								</button>
+							</div>
+							{searchError && (
+								<div className="mt-2 text-xs text-red-500">{searchError}</div>
+							)}
+							{searchResults.length > 0 && (
+								<ul className="mt-2 space-y-1">
+									{searchResults.map((result) => (
+										<li key={`${result.lat}-${result.lon}`}>
+											<button
+												type="button"
+												className="w-full rounded-md border border-gray-200 bg-white px-2 py-1 text-left text-xs hover:bg-gray-100"
+												onClick={() => handleSelectSearchResult(result)}
+											>
+												{result.display_name}
+											</button>
+										</li>
+									))}
+								</ul>
+							)}
 						</div>
 
 						<div
@@ -235,6 +355,11 @@ const RequestCreationScreen: React.FC<{
 									</span>
 								)}
 						</div>
+						{selectedPlaceLabel && (
+							<div className="text-xs text-gray-500">
+								選択した場所: {selectedPlaceLabel}
+							</div>
+						)}
 						{locationError && (
 							<div className="text-xs text-red-500">{locationError}</div>
 						)}
