@@ -35,7 +35,17 @@ const HomeScreen: React.FC<{
 	const requestMarkersRef = useRef<maplibregl.Marker[]>([]);
 	const userMarkerRef = useRef<maplibregl.Marker | null>(null);
 	const hasCenteredOnUserRef = useRef(false);
-	const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+	const [selectedRequestId, setSelectedRequestId] = useState<number | null>(
+		null,
+	);
+	const selectedRequest = useMemo(
+		() =>
+			selectedRequestId
+				? (sortedRequests.find((request) => request.id === selectedRequestId) ??
+					null)
+				: null,
+		[selectedRequestId, sortedRequests],
+	);
 
 	useEffect(() => {
 		if (!mapContainerRef.current || mapRef.current) {
@@ -87,7 +97,7 @@ const HomeScreen: React.FC<{
 					.setLngLat([request.location.lng, request.location.lat])
 					.addTo(map);
 				marker.getElement().addEventListener("click", () => {
-					setSelectedRequest(request);
+					setSelectedRequestId(request.id);
 				});
 				requestMarkersRef.current.push(marker);
 			}
