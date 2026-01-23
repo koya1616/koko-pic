@@ -7,8 +7,8 @@ import type { LatLng, RequestLocation } from "../types/request";
 type Screen = "home" | "request-creation" | "photo-capture";
 
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
-const GEOCODE_ENDPOINT =
-	"https://nominatim.openstreetmap.org/search?format=jsonv2&limit=10&q=";
+const GEOCODE_ENDPOINT = "https://nominatim.openstreetmap.org/search";
+const SEARCH_RADIUS_KM = 5;
 
 type GeocodeResult = {
 	display_name: string;
@@ -34,6 +34,38 @@ const RequestCreationScreen: React.FC<{
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const markerRef = useRef<maplibregl.Marker | null>(null);
+
+	const buildGeocodeUrl = useCallback(
+		(query: string) => {
+			const url = new URL(GEOCODE_ENDPOINT);
+			url.searchParams.set("format", "jsonv2");
+			url.searchParams.set("limit", "10");
+			url.searchParams.set("q", query);
+			url.searchParams.set("accept-language", "ja");
+
+			if (selectedLocation) {
+				const lat = selectedLocation.lat;
+				const lng = selectedLocation.lng;
+				const deltaLat = SEARCH_RADIUS_KM / 111.32;
+				const deltaLng =
+					SEARCH_RADIUS_KM / (111.32 * Math.cos((lat * Math.PI) / 180));
+
+				const left = lng - deltaLng;
+				const right = lng + deltaLng;
+				const top = lat + deltaLat;
+				const bottom = lat - deltaLat;
+
+				url.searchParams.set(
+					"viewbox",
+					`${left},${top},${right},${bottom}`,
+				);
+				url.searchParams.set("bounded", "1");
+			}
+
+			return url.toString();
+		},
+		[selectedLocation],
+	);
 
 	const handlePost = useCallback(() => {
 		const locationNote = selectedLocation ? "（位置情報あり）" : "";
@@ -175,9 +207,7 @@ const RequestCreationScreen: React.FC<{
 		setSearchError(null);
 		setIsSearching(true);
 		try {
-			const response = await fetch(
-				`${GEOCODE_ENDPOINT}${encodeURIComponent(query)}`,
-			);
+			const response = await fetch(buildGeocodeUrl(query));
 			if (!response.ok) {
 				throw new Error("Geocoding failed.");
 			}
