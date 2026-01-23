@@ -334,14 +334,14 @@ const RequestCreationScreen: React.FC<{
 			<div className="mb-4 rounded-lg border border-gray-200 bg-white p-3">
 				<div className="flex items-center justify-between">
 					<div className="text-sm font-medium text-gray-700">
-						位置情報を追加（任意）
+						撮影場所の指定
 					</div>
 					<input
 						type="checkbox"
 						className="h-5 w-5 accent-green-600"
 						checked={isLocationEnabled}
 						onChange={handleToggleLocation}
-						aria-label="位置情報を追加"
+						aria-label="撮影場所の指定"
 					/>
 				</div>
 
