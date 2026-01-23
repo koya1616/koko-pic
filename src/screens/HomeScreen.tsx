@@ -93,7 +93,7 @@ const HomeScreen: React.FC<{
 			{/* Floating Action Button */}
 			<button
 				type="button"
-				className="absolute bottom-8 right-4 bg-indigo-600 text-white rounded-full px-4 py-3 shadow-lg"
+				className="absolute bottom-8 right-4 bg-green-accent text-white rounded-full px-4 py-3 shadow-lg hover-bg-green-600"
 				onClick={() => navigateTo("request-creation")}
 				aria-label="依頼を作成"
 			>
