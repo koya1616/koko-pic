@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
-import type { Request, RequestLocation } from "../types/request";
+import type { Request, RequestLocation, RequestStatus } from "../types/request";
 import RequestCard from "../components/RequestCard";
 import { mockRequests } from "../data/mockRequests";
 import { useGeolocation } from "../hooks/useGeolocation";
@@ -10,7 +10,7 @@ import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
-const STATUS_COLORS: Record<string, string> = {
+const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",
 	"in-progress": "#f59e0b",
 	completed: "#22c55e",

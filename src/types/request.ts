@@ -9,10 +9,12 @@ export type RequestLocation = LatLng & {
 	capturedAt: string;
 };
 
+export type RequestStatus = "open" | "in-progress" | "completed";
+
 export interface Request {
 	id: number;
 	location?: RequestLocation;
-	status: string;
+	status: RequestStatus;
 	description: string;
 	distance?: number;
 }
