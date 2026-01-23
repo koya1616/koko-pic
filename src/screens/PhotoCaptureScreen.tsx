@@ -34,7 +34,10 @@ const PhotoCaptureScreen: React.FC<{
 			<div className="flex flex-col flex-1 min-h-0">
 				{/* Camera Preview - Only show when camera is active */}
 				{(capturedImage || cameraStream) && (
-					<div className="flex-1 relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+					<div
+						className="relative bg-gray-200 rounded-lg mb-4 overflow-hidden flex items-center justify-center"
+						style={{ height: "60vh" }}
+					>
 						{capturedImage ? (
 							<div className="aspect-video w-full h-full flex items-center justify-center">
 								<img
