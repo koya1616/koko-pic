@@ -1,4 +1,4 @@
-const GEO_PERMISSION_DENIED = 1;
+import { GEO_PERMISSION_DENIED } from "../constants/geolocation";
 
 export const geoErrorToMessage = (error: { code: number }) =>
 	error.code === GEO_PERMISSION_DENIED

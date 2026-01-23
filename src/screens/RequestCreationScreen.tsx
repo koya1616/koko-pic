@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { useRequestForm } from "../hooks/useRequestForm";
 import type { LatLng, RequestLocation } from "../types/request";
+import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import {
 	buildGeocodeUrl,
 	type GeocodeResult,
@@ -12,9 +13,6 @@ import { geoErrorToMessage } from "../utils/geolocation";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
-const FALLBACK_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
-const MAP_STYLE_URL =
-	"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 type MapLabelLanguage = "ja" | "en";
 
 const resolveMapLabelLanguage = (locale?: string): MapLabelLanguage => {

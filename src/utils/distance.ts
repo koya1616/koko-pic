@@ -1,7 +1,8 @@
+import { EARTH_RADIUS_METERS } from "../constants/distance";
+
 type LatLng = { lat: number; lng: number };
 
 export const haversineMeters = (a: LatLng, b: LatLng) => {
-	const R = 6371000;
 	const dLat = ((b.lat - a.lat) * Math.PI) / 180;
 	const dLng = ((b.lng - a.lng) * Math.PI) / 180;
 	const lat1 = (a.lat * Math.PI) / 180;
@@ -9,7 +10,7 @@ export const haversineMeters = (a: LatLng, b: LatLng) => {
 	const h =
 		Math.sin(dLat / 2) ** 2 +
 		Math.sin(dLng / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
-	return 2 * R * Math.asin(Math.sqrt(h));
+	return 2 * EARTH_RADIUS_METERS * Math.asin(Math.sqrt(h));
 };
 
 export const formatDistance = (meters: number) => {

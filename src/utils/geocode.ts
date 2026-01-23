@@ -1,7 +1,5 @@
 import type { LatLng } from "../types/request";
-
-const GEOCODE_ENDPOINT = "https://nominatim.openstreetmap.org/search";
-const SEARCH_RADIUS_KM = 5;
+import { GEOCODE_ENDPOINT, SEARCH_RADIUS_KM } from "../constants/geocode";
 
 export const buildGeocodeUrl = ({
 	query,
