@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { useRequestForm } from "../hooks/useRequestForm";
 import type { LatLng, RequestLocation } from "../types/request";
@@ -11,11 +11,53 @@ const GEOCODE_ENDPOINT = "https://nominatim.openstreetmap.org/search";
 const SEARCH_RADIUS_KM = 5;
 const MAP_STYLE_URL =
 	"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+type MapLabelLanguage = "ja" | "en";
 
 type GeocodeResult = {
 	display_name: string;
 	lat: string;
 	lon: string;
+};
+
+const resolveMapLabelLanguage = (locale?: string): MapLabelLanguage => {
+	if (!locale) {
+		return "en";
+	}
+	return locale.toLowerCase().startsWith("ja") ? "ja" : "en";
+};
+
+const buildLabelExpression = (language: MapLabelLanguage) =>
+	language === "ja"
+		? ["coalesce", ["get", "name:ja"], ["get", "name:ja_kana"], ["get", "name"]]
+		: ["coalesce", ["get", "name:en"], ["get", "name"]];
+
+const applyMapLabelLanguage = (
+	map: maplibregl.Map,
+	language: MapLabelLanguage,
+) => {
+	const style = map.getStyle();
+	if (!style?.layers) {
+		return;
+	}
+
+	const labelExpression = buildLabelExpression(language);
+	for (const layer of style.layers) {
+		if (layer.type !== "symbol" || !layer.layout) {
+			continue;
+		}
+
+		const textField = layer.layout["text-field"];
+		if (!textField) {
+			continue;
+		}
+
+		const textFieldString = JSON.stringify(textField);
+		if (!textFieldString.includes("name")) {
+			continue;
+		}
+
+		map.setLayoutProperty(layer.id, "text-field", labelExpression);
+	}
 };
 
 const RequestCreationScreen: React.FC<{
@@ -36,6 +78,13 @@ const RequestCreationScreen: React.FC<{
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const markerRef = useRef<maplibregl.Marker | null>(null);
+	const mapLabelLanguage = useMemo(
+		() =>
+			resolveMapLabelLanguage(
+				typeof navigator === "undefined" ? "en" : navigator.language,
+			),
+		[],
+	);
 
 	const buildGeocodeUrl = useCallback(
 		(query: string) => {
@@ -43,7 +92,7 @@ const RequestCreationScreen: React.FC<{
 			url.searchParams.set("format", "jsonv2");
 			url.searchParams.set("limit", "10");
 			url.searchParams.set("q", query);
-			url.searchParams.set("accept-language", "ja");
+			url.searchParams.set("accept-language", mapLabelLanguage);
 
 			if (selectedLocation) {
 				const lat = selectedLocation.lat;
@@ -57,16 +106,13 @@ const RequestCreationScreen: React.FC<{
 				const top = lat + deltaLat;
 				const bottom = lat - deltaLat;
 
-				url.searchParams.set(
-					"viewbox",
-					`${left},${top},${right},${bottom}`,
-				);
+				url.searchParams.set("viewbox", `${left},${top},${right},${bottom}`);
 				url.searchParams.set("bounded", "1");
 			}
 
 			return url.toString();
 		},
-		[selectedLocation],
+		[selectedLocation, mapLabelLanguage],
 	);
 
 	const handlePost = useCallback(() => {
@@ -117,6 +163,10 @@ const RequestCreationScreen: React.FC<{
 			"top-right",
 		);
 
+		map.on("load", () => {
+			applyMapLabelLanguage(map, mapLabelLanguage);
+		});
+
 		map.on("click", (event) => {
 			setSelectedPlaceLabel(null);
 			setSelectedLocation({
@@ -128,7 +178,15 @@ const RequestCreationScreen: React.FC<{
 		});
 
 		mapRef.current = map;
-	}, [isLocationEnabled, selectedLocation]);
+	}, [isLocationEnabled, selectedLocation, mapLabelLanguage]);
+
+	useEffect(() => {
+		if (!mapRef.current) {
+			return;
+		}
+
+		applyMapLabelLanguage(mapRef.current, mapLabelLanguage);
+	}, [mapLabelLanguage]);
 
 	useEffect(() => {
 		if (!mapRef.current) {
