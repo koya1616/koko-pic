@@ -6,7 +6,6 @@ import type { LatLng, RequestLocation } from "../types/request";
 import {
 	buildGeocodeUrl,
 	type GeocodeResult,
-	formatLocationSummary,
 	parseGeocodeCoordinates,
 } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
@@ -302,8 +301,6 @@ const RequestCreationScreen: React.FC<{
 		setSearchError(null);
 	};
 
-	const locationSummary = formatLocationSummary(selectedLocation);
-
 	return (
 		<div className="flex h-full flex-col overflow-y-auto bg-gray-50 p-4">
 			{/* Header */}
@@ -398,18 +395,9 @@ const RequestCreationScreen: React.FC<{
 
 						<div
 							ref={mapContainerRef}
-							className="h-56 w-full overflow-hidden rounded-lg border border-gray-200"
+							className="h-120 w-full overflow-hidden rounded-lg border border-gray-200"
 						/>
 
-						<div className="text-xs text-gray-600">
-							現在の座標: {locationSummary}
-							{selectedLocation?.source === "gps" &&
-								selectedLocation.accuracy !== undefined && (
-									<span className="ml-2">
-										精度: 約{selectedLocation.accuracy}m
-									</span>
-								)}
-						</div>
 						{selectedPlaceLabel && (
 							<div className="text-xs text-gray-500">
 								選択した場所: {selectedPlaceLabel}
