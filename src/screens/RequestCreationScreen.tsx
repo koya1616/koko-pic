@@ -5,19 +5,17 @@ type Screen = "home" | "request-creation" | "photo-capture";
 
 const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
-}> = ({ navigateTo }) => {
+	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
+}> = ({ navigateTo, showSnackbar }) => {
 	const [requestText, setRequestText] = useState("");
 
 	const handleSubmit = () => {
-		// Check if request content is not empty
 		if (!requestText.trim()) {
-			alert("依頼内容を入力してください");
+			showSnackbar("依頼内容を入力してください", "error");
 			return;
 		}
 
-		// In a real app, this would submit the request
-		// For now, we'll just navigate back to home
-		alert("依頼を投稿しました！");
+		showSnackbar("依頼を投稿しました！", "success");
 		navigateTo("home");
 	};
 

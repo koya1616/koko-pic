@@ -54,7 +54,12 @@ function App() {
 			case "home":
 				return <HomeScreen navigateTo={navigateTo} />;
 			case "request-creation":
-				return <RequestCreationScreen navigateTo={navigateTo} />;
+				return (
+					<RequestCreationScreen
+						navigateTo={navigateTo}
+						showSnackbar={showSnackbar}
+					/>
+				);
 			case "photo-capture":
 				return (
 					<PhotoCaptureScreen
