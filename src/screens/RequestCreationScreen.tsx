@@ -349,7 +349,7 @@ const RequestCreationScreen: React.FC<{
 
 				{isLocationEnabled && (
 					<div className="mt-3 space-y-2">
-						<div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+						<div>
 							<div className="mt-2 flex flex-wrap gap-2">
 								<input
 									type="text"
