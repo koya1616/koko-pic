@@ -3,17 +3,9 @@ import HomeScreen from "./screens/HomeScreen";
 import RequestCreationScreen from "./screens/RequestCreationScreen";
 import PhotoCaptureScreen from "./screens/PhotoCaptureScreen";
 import Snackbar from "./components/Snackbar";
+import type { Request } from "./types/request";
 
-// Define the screen types
 type Screen = "home" | "request-creation" | "photo-capture";
-
-interface Request {
-	id: number;
-	distance: number;
-	location: { lat: number; lng: number };
-	status: string;
-	description: string;
-}
 
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<Screen>("home");

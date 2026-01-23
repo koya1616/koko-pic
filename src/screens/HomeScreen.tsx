@@ -1,8 +1,9 @@
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
+import type { Request } from "../types/request";
 
 // Mock data for requests
-const mockRequests = [
+const mockRequests: Request[] = [
 	{
 		id: 1,
 		location: { lat: 35.6895, lng: 139.6917 },
@@ -24,14 +25,6 @@ const mockRequests = [
 ];
 
 type Screen = "home" | "request-creation" | "photo-capture";
-
-interface Request {
-	id: number;
-	distance?: number;
-	location: { lat: number; lng: number };
-	status: string;
-	description: string;
-}
 
 const haversineMeters = (
 	a: { lat: number; lng: number },
@@ -90,7 +83,7 @@ const HomeScreen: React.FC<{
 				...request,
 				distance: Math.round(haversineMeters(userLocation, request.location)),
 			}))
-			.sort((a, b) => a.distance - b.distance);
+			.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
 	}, [userLocation]);
 
 	return (

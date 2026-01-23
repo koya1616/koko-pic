@@ -1,10 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-interface Request {
-	id: number;
-	description: string;
-}
+import type { Request } from "../types/request";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
