@@ -9,7 +9,7 @@ const parseSearchParams = (urlString: string) =>
 	new URL(urlString).searchParams;
 
 describe("buildGeocodeUrl", () => {
-	it("builds a base geocode url without viewbox when no location is set", () => {
+	it("位置情報が未設定の場合はviewboxを付与せず、基本のジオコードURLを組み立てる", () => {
 		const params = parseSearchParams(
 			buildGeocodeUrl({
 				query: "Tokyo",
@@ -26,7 +26,7 @@ describe("buildGeocodeUrl", () => {
 		expect(params.has("bounded")).toBe(false);
 	});
 
-	it("adds viewbox and bounded when a location is set", () => {
+	it("位置情報がある場合はviewboxとboundedを追加し、検索範囲を限定したURLを組み立てる", () => {
 		const params = parseSearchParams(
 			buildGeocodeUrl({
 				query: "Cafe",
@@ -51,7 +51,7 @@ describe("buildGeocodeUrl", () => {
 });
 
 describe("parseGeocodeCoordinates", () => {
-	it("returns null when coordinates are not numeric", () => {
+	it("緯度経度が数値として解釈できない場合はnullを返す", () => {
 		const result = parseGeocodeCoordinates({
 			display_name: "invalid",
 			lat: "not-a-number",
@@ -61,7 +61,7 @@ describe("parseGeocodeCoordinates", () => {
 		expect(result).toBeNull();
 	});
 
-	it("parses latitude and longitude as numbers", () => {
+	it("緯度と経度を数値に変換して正しく取得できる", () => {
 		const result = parseGeocodeCoordinates({
 			display_name: "valid",
 			lat: "35.123",
@@ -73,11 +73,11 @@ describe("parseGeocodeCoordinates", () => {
 });
 
 describe("formatLocationSummary", () => {
-	it("returns placeholder when location is missing", () => {
+	it("位置情報が欠けている場合はプレースホルダー文字列を返す", () => {
 		expect(formatLocationSummary(null)).toBe("未設定");
 	});
 
-	it("formats coordinates to 5 decimals", () => {
+	it("座標の表示を小数点以下5桁に整形する", () => {
 		expect(formatLocationSummary({ lat: 35.123456, lng: 139.987654 })).toBe(
 			"35.12346, 139.98765",
 		);

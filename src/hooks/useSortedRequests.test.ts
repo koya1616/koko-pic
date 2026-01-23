@@ -20,13 +20,13 @@ const createRequest = (
 });
 
 describe("sortRequestsByDistance", () => {
-	it("returns the original array when userLocation is null", () => {
+	it("userLocationがnullの場合は距離計算を行わず、入力された配列をそのまま返す", () => {
 		const requests = [createRequest(1, 0, 0), createRequest(2, 0, 0.02)];
 
 		expect(sortRequestsByDistance(requests, null)).toBe(requests);
 	});
 
-	it("sorts by distance and rounds to meters", () => {
+	it("ユーザー位置からの距離で近い順に並べ替え、距離をメートル単位で丸める", () => {
 		const userLocation = { lat: 0, lng: 0 };
 		const requests = [createRequest(1, 0, 0.02), createRequest(2, 0, 0.01)];
 
@@ -37,7 +37,7 @@ describe("sortRequestsByDistance", () => {
 		expect(sorted[1]?.distance).toBe(2224);
 	});
 
-	it("keeps requests without location at the end", () => {
+	it("位置情報が欠けているリクエストは距離計算の対象外とし、配列の末尾に並べる", () => {
 		const userLocation = { lat: 0, lng: 0 };
 		const requests: Request[] = [
 			createRequest(1, 0, 0.02),
