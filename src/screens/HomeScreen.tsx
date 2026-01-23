@@ -48,12 +48,6 @@ const HomeScreen: React.FC<{
 			<header className="bg-white shadow-sm p-4 flex justify-between items-center">
 				<h1 className="text-xl font-bold text-indigo-500">KokoPic</h1>
 				<div className="flex space-x-4">
-					<button type="button" className="relative">
-						<span className="text-gray-600">🔔</span>
-						<span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-							3
-						</span>
-					</button>
 					<button type="button" className="text-gray-600">
 						👤
 					</button>
