@@ -335,13 +335,8 @@ const RequestCreationScreen: React.FC<{
 
 			<div className="mb-4 rounded-lg border border-gray-200 bg-white p-3">
 				<div className="flex items-center justify-between">
-					<div>
-						<div className="text-sm font-medium text-gray-700">
-							位置情報を追加（任意）
-						</div>
-						<div className="text-xs text-gray-500">
-							地図でピンを置いて座標を保存します。
-						</div>
+					<div className="text-sm font-medium text-gray-700">
+						位置情報を追加（任意）
 					</div>
 					<input
 						type="checkbox"
@@ -355,9 +350,6 @@ const RequestCreationScreen: React.FC<{
 				{isLocationEnabled && (
 					<div className="mt-3 space-y-2">
 						<div className="rounded-md border border-gray-200 bg-gray-50 p-3">
-							<div className="text-xs font-medium text-gray-600">
-								場所を検索
-							</div>
 							<div className="mt-2 flex flex-wrap gap-2">
 								<input
 									type="text"
@@ -406,9 +398,6 @@ const RequestCreationScreen: React.FC<{
 							className="h-56 w-full overflow-hidden rounded-lg border border-gray-200"
 						/>
 
-						<div className="text-xs text-gray-500">
-							地図をクリックしてピンを配置してください。
-						</div>
 						<div className="text-xs text-gray-600">
 							現在の座標: {locationSummary}
 							{selectedLocation?.source === "gps" &&
