@@ -9,6 +9,8 @@ type Screen = "home" | "request-creation" | "photo-capture";
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
 const GEOCODE_ENDPOINT = "https://nominatim.openstreetmap.org/search";
 const SEARCH_RADIUS_KM = 5;
+const MAP_STYLE_URL =
+	"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 type GeocodeResult = {
 	display_name: string;
@@ -105,7 +107,7 @@ const RequestCreationScreen: React.FC<{
 		const center = selectedLocation ?? DEFAULT_CENTER;
 		const map = new maplibregl.Map({
 			container: mapContainerRef.current,
-			style: "https://demotiles.maplibre.org/style.json",
+			style: MAP_STYLE_URL,
 			center: [center.lng, center.lat],
 			zoom: selectedLocation ? 15 : 12,
 		});
