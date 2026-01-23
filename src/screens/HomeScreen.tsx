@@ -54,9 +54,11 @@ const HomeScreen: React.FC<{
 			<div className="flex-1 overflow-y-auto p-4 space-y-3">
 				<h2 className="font-semibold text-gray-700">近くの依頼一覧</h2>
 				{mockRequests.map((request) => (
-					<div
+					<button
 						key={request.id}
-						className="p-4 border rounded-xl bg-white shadow-sm"
+						type="button"
+						className="p-4 border rounded-xl bg-white shadow-sm text-left w-full"
+						onClick={() => navigateTo("photo-capture", request)}
 					>
 						<div className="flex justify-between items-start">
 							<div>
@@ -66,7 +68,7 @@ const HomeScreen: React.FC<{
 						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
 							<span>距離: {request.distance}m</span>
 						</div>
-					</div>
+					</button>
 				))}
 			</div>
 
