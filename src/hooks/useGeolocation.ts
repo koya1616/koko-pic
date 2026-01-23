@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-type LatLng = { lat: number; lng: number };
+import type { LatLng } from "../types/request";
 
 export const useGeolocation = () => {
 	const [location, setLocation] = useState<LatLng | null>(null);

@@ -3,19 +3,34 @@ import type { Request } from "../types/request";
 export const mockRequests: Request[] = [
 	{
 		id: 1,
-		location: { lat: 35.6895, lng: 139.6917 },
+		location: {
+			lat: 35.6895,
+			lng: 139.6917,
+			source: "map",
+			capturedAt: "2024-01-05T09:15:00.000Z",
+		},
 		status: "open",
 		description: "駅前の混雑状況がわかる写真1枚ください",
 	},
 	{
 		id: 2,
-		location: { lat: 35.6905, lng: 139.6927 },
+		location: {
+			lat: 35.6905,
+			lng: 139.6927,
+			source: "map",
+			capturedAt: "2024-01-05T09:25:00.000Z",
+		},
 		status: "open",
 		description: "コンビニ前の様子を確認したいです",
 	},
 	{
 		id: 3,
-		location: { lat: 35.6885, lng: 139.6907 },
+		location: {
+			lat: 35.6885,
+			lng: 139.6907,
+			source: "map",
+			capturedAt: "2024-01-05T09:35:00.000Z",
+		},
 		status: "in-progress",
 		description: "満開の桜を撮影してほしいです",
 	},
