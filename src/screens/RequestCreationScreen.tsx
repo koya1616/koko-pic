@@ -140,7 +140,10 @@ const RequestCreationScreen: React.FC<{
 		});
 
 		map.addControl(
-			new maplibregl.NavigationControl({ visualizePitch: true }),
+			new maplibregl.NavigationControl({
+				visualizePitch: true,
+				showCompass: false,
+			}),
 			"top-right",
 		);
 
