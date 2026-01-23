@@ -8,7 +8,7 @@ type Screen = "home" | "request-creation" | "photo-capture";
 
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
 const GEOCODE_ENDPOINT =
-	"https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=";
+	"https://nominatim.openstreetmap.org/search?format=jsonv2&limit=10&q=";
 
 type GeocodeResult = {
 	display_name: string;
