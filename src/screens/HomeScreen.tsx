@@ -1,100 +1,17 @@
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
 import type { Request } from "../types/request";
-
-// Mock data for requests
-const mockRequests: Request[] = [
-	{
-		id: 1,
-		location: { lat: 35.6895, lng: 139.6917 },
-		status: "open", // 'open', 'in-progress', 'completed'
-		description: "駅前の混雑状況がわかる写真1枚ください",
-	},
-	{
-		id: 2,
-		location: { lat: 35.6905, lng: 139.6927 },
-		status: "open",
-		description: "コンビニ前の様子を確認したいです",
-	},
-	{
-		id: 3,
-		location: { lat: 35.6885, lng: 139.6907 },
-		status: "in-progress",
-		description: "満開の桜を撮影してほしいです",
-	},
-];
+import RequestCard from "../components/RequestCard";
+import { mockRequests } from "../data/mockRequests";
+import { useGeolocation } from "../hooks/useGeolocation";
+import { useSortedRequests } from "../hooks/useSortedRequests";
 
 type Screen = "home" | "request-creation" | "photo-capture";
-
-const haversineMeters = (
-	a: { lat: number; lng: number },
-	b: { lat: number; lng: number },
-) => {
-	const R = 6371000;
-	const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-	const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-	const lat1 = (a.lat * Math.PI) / 180;
-	const lat2 = (b.lat * Math.PI) / 180;
-	const h =
-		Math.sin(dLat / 2) ** 2 +
-		Math.sin(dLng / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
-	return 2 * R * Math.asin(Math.sqrt(h));
-};
-
-const formatDistance = (meters: number) => {
-	if (meters >= 1000) {
-		const km = (meters / 1000).toFixed(1);
-		const trimmed = km.endsWith(".0") ? km.slice(0, -2) : km;
-		return `${trimmed}km`;
-	}
-
-	return `${meters}m`;
-};
 
 const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
-	const [userLocation, setUserLocation] = useState<{
-		lat: number;
-		lng: number;
-	} | null>(null);
-	const [locationError, setLocationError] = useState<string | null>(null);
-
-	useEffect(() => {
-		if (!navigator.geolocation) {
-			setLocationError("この環境では位置情報が利用できません。");
-			return;
-		}
-
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				setUserLocation({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-				});
-			},
-			(error) => {
-				setLocationError(
-					error.code === error.PERMISSION_DENIED
-						? "位置情報の利用が許可されていません。"
-						: "位置情報の取得に失敗しました。",
-				);
-			},
-			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
-		);
-	}, []);
-
-	const sortedRequests = useMemo(() => {
-		if (!userLocation) {
-			return mockRequests;
-		}
-		return mockRequests
-			.map((request) => ({
-				...request,
-				distance: Math.round(haversineMeters(userLocation, request.location)),
-			}))
-			.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
-	}, [userLocation]);
+	const { location: userLocation, error: locationError } = useGeolocation();
+	const sortedRequests = useSortedRequests(mockRequests, userLocation);
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50">
@@ -117,25 +34,11 @@ const HomeScreen: React.FC<{
 					<div className="text-sm text-gray-500">現在地を取得中です…</div>
 				) : null}
 				{sortedRequests.map((request) => (
-					<button
+					<RequestCard
 						key={request.id}
-						type="button"
-						className="p-4 border rounded-xl bg-white shadow-sm text-left w-full"
-						onClick={() => navigateTo("photo-capture", request)}
-					>
-						<div className="flex justify-between items-start">
-							<div>
-								<div className="font-semibold">{request.description}</div>
-							</div>
-						</div>
-						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
-							<span>
-								{request.distance !== undefined
-									? `距離: ${formatDistance(request.distance)}`
-									: "距離: 取得できません"}
-							</span>
-						</div>
-					</button>
+						request={request}
+						onSelect={(selected) => navigateTo("photo-capture", selected)}
+					/>
 				))}
 			</div>
 

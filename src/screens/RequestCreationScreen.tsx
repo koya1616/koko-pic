@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState } from "react";
+import { useRequestForm } from "../hooks/useRequestForm";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
@@ -7,17 +7,13 @@ const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
 }> = ({ navigateTo, showSnackbar }) => {
-	const [requestText, setRequestText] = useState("");
-
-	const handleSubmit = () => {
-		if (!requestText.trim()) {
-			showSnackbar("依頼内容を入力してください", "error");
-			return;
-		}
-
-		showSnackbar("依頼を投稿しました！", "success");
-		navigateTo("home");
-	};
+	const { handleSubmit, requestText, setRequestText } = useRequestForm({
+		onSubmit: () => {
+			showSnackbar("依頼を投稿しました！", "success");
+			navigateTo("home");
+		},
+		onError: (message) => showSnackbar(message, "error"),
+	});
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50 p-4">

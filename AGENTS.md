@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `src/` holds the React + TypeScript UI (`App.tsx`, `main.tsx`, feature folders like `components/`, `screens/`, `context/`, `types/`).
+- `src/` holds the React + TypeScript UI (`App.tsx`, `main.tsx`, feature folders like `components/`, `screens/`, `hooks/`, `utils/`, `data/`, `context/`, `types/`).
 - `src/assets/` and `public/` store frontend assets; `dist/` is build output.
 - `src-tauri/` contains the Rust backend, build scripts, and config (`src-tauri/src/`, `src-tauri/tauri.conf.json`, `src-tauri/icons/`).
 - `docs/` is for project documentation.
