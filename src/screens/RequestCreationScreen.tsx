@@ -94,10 +94,9 @@ const RequestCreationScreen: React.FC<{
 	);
 
 	const handlePost = useCallback(() => {
-		const locationNote = selectedLocation ? "（位置情報あり）" : "";
-		showSnackbar(`依頼を投稿しました！${locationNote}`, "success");
+		showSnackbar("依頼を投稿しました！", "success");
 		navigateTo("home");
-	}, [navigateTo, selectedLocation, showSnackbar]);
+	}, [navigateTo, showSnackbar]);
 
 	const { handleSubmit, requestText, setRequestText } = useRequestForm({
 		onSubmit: handlePost,
