@@ -9,8 +9,7 @@ body {
 		Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	height: 100vh;
-	overflow: hidden;
+	min-height: 100vh;
 }
 
 /* Limited color palette variables */

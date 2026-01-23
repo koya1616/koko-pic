@@ -149,7 +149,7 @@ const HomeScreen: React.FC<{
 	}, [requestsWithLocation, userLocation]);
 
 	return (
-		<div className="flex flex-col h-full bg-gray-50">
+		<div className="flex flex-col bg-gray-50">
 			{/* Header */}
 			<header className="bg-white shadow-sm p-4 flex justify-between items-center">
 				<h1 className="text-xl font-bold text-indigo-500">KokoPic</h1>
@@ -185,7 +185,7 @@ const HomeScreen: React.FC<{
 			</div>
 
 			{/* Request List */}
-			<div className="flex-1 overflow-y-auto p-4 space-y-3">
+			<div className="p-4 space-y-3">
 				<h2 className="font-semibold text-gray-700">近くの依頼一覧</h2>
 				{sortedRequests.length === 0 && !locationError ? (
 					<div className="text-sm text-gray-500">現在地を取得中です…</div>
@@ -202,7 +202,7 @@ const HomeScreen: React.FC<{
 			{/* Floating Action Button */}
 			<button
 				type="button"
-				className="absolute bottom-8 right-4 bg-green-accent text-white rounded-full px-4 py-3 shadow-lg hover-bg-green-600"
+				className="fixed bottom-8 right-4 bg-green-accent text-white rounded-full px-4 py-3 shadow-lg hover-bg-green-600"
 				onClick={() => navigateTo("request-creation")}
 				aria-label="依頼を作成"
 			>
