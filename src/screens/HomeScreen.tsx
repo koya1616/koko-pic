@@ -161,7 +161,6 @@ const HomeScreen: React.FC<{
 			</header>
 
 			<div className="px-4 pt-4">
-				<h2 className="font-semibold text-gray-700">地図で見る</h2>
 				<div
 					ref={mapContainerRef}
 					className="mt-2 h-80 w-full overflow-hidden rounded-lg border border-gray-200 bg-white"
