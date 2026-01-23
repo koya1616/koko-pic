@@ -4,7 +4,6 @@ import type React from "react";
 const mockRequests = [
 	{
 		id: 1,
-		title: "駅前の混雑",
 		distance: 120,
 		location: { lat: 35.6895, lng: 139.6917 },
 		status: "open", // 'open', 'in-progress', 'completed'
@@ -12,7 +11,6 @@ const mockRequests = [
 	},
 	{
 		id: 2,
-		title: "コンビニ前の様子",
 		distance: 350,
 		location: { lat: 35.6905, lng: 139.6927 },
 		status: "open",
@@ -20,7 +18,6 @@ const mockRequests = [
 	},
 	{
 		id: 3,
-		title: "公園の桜",
 		distance: 900,
 		location: { lat: 35.6885, lng: 139.6907 },
 		status: "in-progress",
@@ -32,7 +29,6 @@ type Screen = "home" | "request-creation" | "photo-capture";
 
 interface Request {
 	id: number;
-	title: string;
 	distance: number;
 	location: { lat: number; lng: number };
 	status: string;
@@ -64,10 +60,7 @@ const HomeScreen: React.FC<{
 					>
 						<div className="flex justify-between items-start">
 							<div>
-								<div className="font-semibold">{request.title}</div>
-								<p className="text-sm text-gray-600 mt-1">
-									{request.description}
-								</p>
+								<div className="font-semibold">{request.description}</div>
 							</div>
 						</div>
 						<div className="flex items-center justify-between mt-3 text-sm text-gray-500">

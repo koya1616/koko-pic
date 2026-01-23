@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Request {
 	id: number;
-	title: string;
 	description: string;
 }
 
@@ -108,7 +107,7 @@ const PhotoCaptureScreen: React.FC<{
 					← 戻る
 				</button>
 				<h1 className="text-lg font-semibold">
-					撮影依頼：{request?.title || "依頼"}
+					撮影依頼：{request?.description || "依頼内容"}
 				</h1>
 			</header>
 

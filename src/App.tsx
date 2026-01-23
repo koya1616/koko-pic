@@ -9,7 +9,6 @@ type Screen = "home" | "request-creation" | "photo-capture";
 
 interface Request {
 	id: number;
-	title: string;
 	distance: number;
 	location: { lat: number; lng: number };
 	status: string;
