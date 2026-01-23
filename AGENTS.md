@@ -1,10 +1,10 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `src/` holds the React + TypeScript UI (`App.tsx`, `main.tsx`, feature folders like `components/`, `screens/`, `hooks/`, `utils/`, `data/`, `context/`, `types/`).
-- `src/assets/` and `public/` store frontend assets; `dist/` is build output.
+- `src/` holds the React + TypeScript UI (`App.tsx`, `main.tsx`, and folders like `components/`, `screens/`, `hooks/`, `utils/`, `data/`, `context/`, `types/`).
+- `src/assets/` and `public/` store frontend assets; `dist/` is the production build output.
 - `src-tauri/` contains the Rust backend, build scripts, and config (`src-tauri/src/`, `src-tauri/tauri.conf.json`, `src-tauri/icons/`).
-- `docs/` is for project documentation.
+- `docs/` is reserved for project documentation.
 
 ## Build, Test, and Development Commands
 - `pnpm install`: install JS dependencies.
@@ -18,17 +18,18 @@
 ## Coding Style & Naming Conventions
 - Formatting/linting is handled by Biome; indent style is tabs and strings use double quotes.
 - Prefer TypeScript for all frontend code and keep components small and focused.
-- Use `PascalCase` for React components and `camelCase` for functions/variables; keep file names aligned with exports (e.g., `PhotoCaptureScreen.tsx`).
+- Use `PascalCase` for React components and `camelCase` for functions/variables; keep file names aligned with exports (for example, `PhotoCaptureScreen.tsx`).
 
 ## Testing Guidelines
-- No automated test framework is configured yet. If you add tests, document the runner and wire it into a `pnpm test` script.
-- Aim for test files co-located with features (for example, next to the component) and keep naming consistent.
+- No automated test framework is configured yet.
+- If you add tests, document the runner and wire it into a `pnpm test` script.
+- Co-locate tests with features and keep naming consistent (for example, `PhotoCaptureScreen.test.tsx`).
 
 ## Commit & Pull Request Guidelines
-- Recent history follows Conventional Commit-style prefixes like `refactor:` and `docs:`. Use `type: short description` in the imperative mood.
+- Commit messages follow Conventional Commit-style prefixes like `refactor:` or `docs:` and use the imperative mood.
 - PRs should include a concise description, linked issue (if any), and screenshots for UI changes.
 - Call out any Tauri/Rust changes separately since they affect the desktop build.
 
 ## Configuration & Environment Notes
 - Tauri requires Rust and the Tauri CLI; keep `src-tauri/` in sync with frontend changes.
-- Vite configuration lives in `vite.config.ts`, and TS config in `tsconfig.json` and `tsconfig.node.json`.
+- Vite config lives in `vite.config.ts`; TS config in `tsconfig.json` and `tsconfig.node.json`.
