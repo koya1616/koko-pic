@@ -139,9 +139,7 @@ const PhotoCaptureScreen: React.FC<{
 
 				{/* Request Info */}
 				<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
-					<div className="font-medium">
-						依頼内容：{request?.description || "依頼内容がありません"}
-					</div>
+					<div className="font-medium">{request?.description || "依頼内容がありません"}</div>
 				</div>
 
 				{/* Action Buttons */}
