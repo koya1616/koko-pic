@@ -3,21 +3,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { useRequestForm } from "../hooks/useRequestForm";
 import type { LatLng, RequestLocation } from "../types/request";
+import {
+	buildGeocodeUrl,
+	type GeocodeResult,
+	formatLocationSummary,
+	parseGeocodeCoordinates,
+} from "../utils/geocode";
+import { geoErrorToMessage } from "../utils/geolocation";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
-const GEOCODE_ENDPOINT = "https://nominatim.openstreetmap.org/search";
-const SEARCH_RADIUS_KM = 5;
 const MAP_STYLE_URL =
 	"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 type MapLabelLanguage = "ja" | "en";
-
-type GeocodeResult = {
-	display_name: string;
-	lat: string;
-	lon: string;
-};
 
 const resolveMapLabelLanguage = (locale?: string): MapLabelLanguage => {
 	if (!locale) {
@@ -86,32 +85,13 @@ const RequestCreationScreen: React.FC<{
 		[],
 	);
 
-	const buildGeocodeUrl = useCallback(
-		(query: string) => {
-			const url = new URL(GEOCODE_ENDPOINT);
-			url.searchParams.set("format", "jsonv2");
-			url.searchParams.set("limit", "10");
-			url.searchParams.set("q", query);
-			url.searchParams.set("accept-language", mapLabelLanguage);
-
-			if (selectedLocation) {
-				const lat = selectedLocation.lat;
-				const lng = selectedLocation.lng;
-				const deltaLat = SEARCH_RADIUS_KM / 111.32;
-				const deltaLng =
-					SEARCH_RADIUS_KM / (111.32 * Math.cos((lat * Math.PI) / 180));
-
-				const left = lng - deltaLng;
-				const right = lng + deltaLng;
-				const top = lat + deltaLat;
-				const bottom = lat - deltaLat;
-
-				url.searchParams.set("viewbox", `${left},${top},${right},${bottom}`);
-				url.searchParams.set("bounded", "1");
-			}
-
-			return url.toString();
-		},
+	const buildGeocodeUrlForQuery = useCallback(
+		(query: string) =>
+			buildGeocodeUrl({
+				query,
+				language: mapLabelLanguage,
+				selectedLocation,
+			}),
 		[selectedLocation, mapLabelLanguage],
 	);
 
@@ -246,11 +226,7 @@ const RequestCreationScreen: React.FC<{
 				});
 			},
 			(geoError) => {
-				setLocationError(
-					geoError.code === geoError.PERMISSION_DENIED
-						? "位置情報の利用が許可されていません。"
-						: "位置情報の取得に失敗しました。",
-				);
+				setLocationError(geoErrorToMessage(geoError));
 			},
 			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
 		);
@@ -267,7 +243,7 @@ const RequestCreationScreen: React.FC<{
 		setSearchError(null);
 		setIsSearching(true);
 		try {
-			const response = await fetch(buildGeocodeUrl(query));
+			const response = await fetch(buildGeocodeUrlForQuery(query));
 			if (!response.ok) {
 				throw new Error("Geocoding failed.");
 			}
@@ -285,16 +261,14 @@ const RequestCreationScreen: React.FC<{
 	};
 
 	const handleSelectSearchResult = (result: GeocodeResult) => {
-		const lat = Number(result.lat);
-		const lng = Number(result.lon);
-		if (Number.isNaN(lat) || Number.isNaN(lng)) {
+		const coordinates = parseGeocodeCoordinates(result);
+		if (!coordinates) {
 			setSearchError("座標の取得に失敗しました。");
 			return;
 		}
 
 		setSelectedLocation({
-			lat,
-			lng,
+			...coordinates,
 			source: "search",
 			capturedAt: new Date().toISOString(),
 		});
@@ -303,9 +277,7 @@ const RequestCreationScreen: React.FC<{
 		setSearchError(null);
 	};
 
-	const locationSummary = selectedLocation
-		? `${selectedLocation.lat.toFixed(5)}, ${selectedLocation.lng.toFixed(5)}`
-		: "未設定";
+	const locationSummary = formatLocationSummary(selectedLocation);
 
 	return (
 		<div className="flex h-full flex-col overflow-y-auto bg-gray-50 p-4">
