@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LanguageProvider } from "./context/LanguageContext";
 import HomeScreen from "./screens/HomeScreen";
 import RequestCreationScreen from "./screens/RequestCreationScreen";
 import PhotoCaptureScreen from "./screens/PhotoCaptureScreen";
@@ -78,4 +79,12 @@ function App() {
 	);
 }
 
-export default App;
+const AppWithLanguageSwitcher: React.FC = () => {
+	return (
+		<LanguageProvider>
+			<App />
+		</LanguageProvider>
+	);
+};
+
+export default AppWithLanguageSwitcher;

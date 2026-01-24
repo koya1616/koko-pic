@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Request } from "../types/request";
 import { useCamera } from "../hooks/useCamera";
+import { useTranslation } from "../context/LanguageContext";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
@@ -9,11 +10,12 @@ const PhotoCaptureScreen: React.FC<{
 	request: Request | null;
 	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
 }> = ({ navigateTo, request, showSnackbar }) => {
+	const { t } = useTranslation();
 	const { cameraStream, capturedImage, canvasRef, handleCapture, videoRef } =
 		useCamera();
 
 	const handleSubmit = () => {
-		showSnackbar("写真が正常に送信されました", "success");
+		showSnackbar(t("photoSubmitted"), "success");
 		navigateTo("home");
 	};
 
@@ -26,9 +28,9 @@ const PhotoCaptureScreen: React.FC<{
 					className="mr-2 text-gray-600"
 					onClick={() => navigateTo("home")}
 				>
-					← 戻る
+					{t("back")}
 				</button>
-				<h1 className="text-lg font-semibold">撮影依頼</h1>
+				<h1 className="text-lg font-semibold">{t("createRequest")}</h1>
 			</header>
 
 			<div className="flex flex-col flex-1 min-h-0">
@@ -65,7 +67,7 @@ const PhotoCaptureScreen: React.FC<{
 				{/* Request Info */}
 				<div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
 					<div className="font-medium">
-						{request?.description || "依頼内容がありません"}
+						{request?.description || t("noRequestDescription")}
 					</div>
 				</div>
 
@@ -78,10 +80,10 @@ const PhotoCaptureScreen: React.FC<{
 					>
 						📷{" "}
 						{!cameraStream && !capturedImage
-							? "撮影開始"
+							? t("captureStart")
 							: cameraStream
-								? "シャッター"
-								: "撮り直す"}
+								? t("shutter")
+								: t("retake")}
 					</button>
 				</div>
 
@@ -96,7 +98,7 @@ const PhotoCaptureScreen: React.FC<{
 					disabled={!capturedImage}
 					onClick={handleSubmit}
 				>
-					🚀 写真を送信
+					🚀 {t("submitPhoto")}
 				</button>
 			</div>
 		</div>

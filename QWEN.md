@@ -1,98 +1,35 @@
-# Qwen Code Analysis - koko-pic
+# Repository Guidelines
 
-## Project Overview
+## Project Structure & Module Organization
+- `src/` holds the React + TypeScript UI (`App.tsx`, `main.tsx`, and folders like `components/`, `screens/`, `hooks/`, `utils/`, `data/`, `context/`, `types/`).
+- `src/assets/` and `public/` store frontend assets; `dist/` is the production build output.
+- `src-tauri/` contains the Rust backend, build scripts, and config (`src-tauri/src/`, `src-tauri/tauri.conf.json`, `src-tauri/icons/`).
+- `docs/` is reserved for project documentation.
 
-This is a cross-platform desktop application built with **Tauri**, **React**, and **TypeScript** using Vite as the build tool. The project follows the Tauri architecture where the frontend is built with React/TypeScript and the backend is implemented in Rust, allowing for secure and efficient desktop applications with a small footprint.
+## Build, Test, and Development Commands
+- `pnpm install`: install JS dependencies.
+- `pnpm dev`: run the Vite dev server for the frontend.
+- `pnpm build`: typecheck with `tsc` and build the production bundle.
+- `pnpm preview`: serve the production build locally.
+- `pnpm lint`: run Biome lint/format and TypeScript checks.
+- `pnpm tauri dev`: run the full Tauri desktop app in dev mode.
+- `pnpm tauri build`: build the native desktop app.
 
-### Key Technologies:
-- **Frontend**: React 19, TypeScript, Vite
-- **Backend**: Rust with Tauri framework
-- **Build System**: Vite with pnpm as the package manager
-- **UI**: Basic React components with CSS styling
+## Coding Style & Naming Conventions
+- Formatting/linting is handled by Biome; indent style is tabs and strings use double quotes.
+- Prefer TypeScript for all frontend code and keep components small and focused.
+- Use `PascalCase` for React components and `camelCase` for functions/variables; keep file names aligned with exports (for example, `PhotoCaptureScreen.tsx`).
 
-### Architecture:
-- The frontend communicates with the Rust backend through Tauri's command system
-- The application has a simple greeting feature that demonstrates the frontend-backend communication
-- The project is structured with the frontend in `/src` and the Rust backend in `/src-tauri`
+## Testing Guidelines
+- No automated test framework is configured yet.
+- If you add tests, document the runner and wire it into a `pnpm test` script.
+- Co-locate tests with features and keep naming consistent (for example, `PhotoCaptureScreen.test.tsx`).
 
-## Building and Running
+## Commit & Pull Request Guidelines
+- Commit messages follow Conventional Commit-style prefixes like `refactor:` or `docs:` and use the imperative mood.
+- PRs should include a concise description, linked issue (if any), and screenshots for UI changes.
+- Call out any Tauri/Rust changes separately since they affect the desktop build.
 
-### Prerequisites:
-- Node.js (with pnpm package manager)
-- Rust programming language
-- Tauri CLI
-
-### Development Commands:
-```bash
-# Install dependencies
-pnpm install
-
-# Run the development server
-pnpm dev
-
-# Build the application for production
-pnpm build
-
-# Preview the built application
-pnpm preview
-
-# Run Tauri-specific commands
-pnpm tauri
-```
-
-### Tauri-Specific Commands:
-```bash
-# Run the Tauri application in development mode
-pnpm tauri dev
-
-# Build the Tauri application for production
-pnpm tauri build
-```
-
-## Project Structure
-
-```
-koko-pic/
-├── src/                    # Frontend source code
-│   ├── App.tsx            # Main React component
-│   ├── main.tsx           # Entry point for React app
-│   └── assets/            # Static assets
-├── src-tauri/             # Rust backend source code
-│   ├── src/
-│   │   └── lib.rs         # Rust library with Tauri commands
-│   ├── Cargo.toml         # Rust dependencies
-│   └── tauri.conf.json    # Tauri configuration
-├── public/                # Public assets
-├── package.json           # Node.js dependencies and scripts
-├── vite.config.ts         # Vite configuration
-├── tsconfig.json          # TypeScript configuration
-└── README.md              # Project documentation
-```
-
-## Key Features
-
-1. **Frontend-Backend Communication**: The application demonstrates how React components can communicate with Rust functions through Tauri's invoke system.
-
-2. **Cross-Platform Desktop App**: Built with Tauri to create a native desktop application that runs on Windows, macOS, and Linux.
-
-3. **Modern Tech Stack**: Uses React 19, TypeScript for type safety, and Vite for fast development builds.
-
-## Development Conventions
-
-- **Type Safety**: The project uses TypeScript throughout for type checking and improved developer experience.
-- **Component-Based Architecture**: React components are organized in a modular fashion.
-- **Rust Backend Logic**: Business logic and system-level operations are handled in Rust for performance and security.
-- **Tauri Security Model**: Leverages Tauri's security model to restrict access to system resources.
-
-## Configuration Files
-
-- **tauri.conf.json**: Contains configuration for the Tauri application including window properties, security settings, and build options.
-- **vite.config.ts**: Configures the Vite build tool with Tauri-specific settings like port configuration and file watching exclusions.
-- **tsconfig.json**: Defines TypeScript compilation options for the frontend code.
-
-## Important Notes
-
-- The project uses pnpm as the package manager, which provides efficient dependency management through symlinks.
-- The development server runs on port 1420 by default, with HMR enabled for faster development cycles.
-- The Rust backend includes a sample `greet` command that demonstrates how to pass data between the frontend and backend.
-- The project includes the `tauri-plugin-opener` plugin for handling file opening operations.
+## Configuration & Environment Notes
+- Tauri requires Rust and the Tauri CLI; keep `src-tauri/` in sync with frontend changes.
+- Vite config lives in `vite.config.ts`; TS config in `tsconfig.json` and `tsconfig.node.json`.

@@ -10,6 +10,7 @@ import {
 	parseGeocodeCoordinates,
 } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
+import { useTranslation } from "../context/LanguageContext";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
@@ -60,6 +61,7 @@ const RequestCreationScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
 }> = ({ navigateTo, showSnackbar }) => {
+	const { t } = useTranslation();
 	const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 	const [selectedLocation, setSelectedLocation] =
 		useState<RequestLocation | null>(null);
@@ -94,9 +96,9 @@ const RequestCreationScreen: React.FC<{
 	);
 
 	const handlePost = useCallback(() => {
-		showSnackbar("依頼を投稿しました！", "success");
+		showSnackbar(t("requestPosted"), "success");
 		navigateTo("home");
-	}, [navigateTo, showSnackbar]);
+	}, [navigateTo, showSnackbar, t]);
 
 	const { handleSubmit, requestText, setRequestText } = useRequestForm({
 		onSubmit: handlePost,
@@ -166,7 +168,7 @@ const RequestCreationScreen: React.FC<{
 		}
 
 		if (!navigator.geolocation) {
-			setLocationError("この環境では位置情報が利用できません。");
+			setLocationError(t("locationUnavailable"));
 			return;
 		}
 
@@ -195,7 +197,7 @@ const RequestCreationScreen: React.FC<{
 			},
 			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
 		);
-	}, [isLocationEnabled]);
+	}, [isLocationEnabled, t]);
 
 	useEffect(() => {
 		if (!mapRef.current) {
@@ -256,7 +258,7 @@ const RequestCreationScreen: React.FC<{
 	const handleSearchLocation = async () => {
 		const query = searchQuery.trim();
 		if (!query) {
-			setSearchError("検索キーワードを入力してください。");
+			setSearchError(t("searchPlaceholder")); // Using a similar translation key
 			setSearchResults([]);
 			return;
 		}
@@ -271,10 +273,10 @@ const RequestCreationScreen: React.FC<{
 			const results = (await response.json()) as GeocodeResult[];
 			setSearchResults(results);
 			if (results.length === 0) {
-				setSearchError("候補が見つかりませんでした。");
+				setSearchError(t("noResults"));
 			}
 		} catch {
-			setSearchError("検索に失敗しました。時間をおいて再度お試しください。");
+			setSearchError(t("searchFailed"));
 			setSearchResults([]);
 		} finally {
 			setIsSearching(false);
@@ -284,7 +286,7 @@ const RequestCreationScreen: React.FC<{
 	const handleSelectSearchResult = (result: GeocodeResult) => {
 		const coordinates = parseGeocodeCoordinates(result);
 		if (!coordinates) {
-			setSearchError("座標の取得に失敗しました。");
+			setSearchError(t("geolocationFailed")); // Using a similar translation key
 			return;
 		}
 
@@ -307,9 +309,9 @@ const RequestCreationScreen: React.FC<{
 					className="mr-2 text-gray-600"
 					onClick={() => navigateTo("home")}
 				>
-					← 戻る
+					{t("back")}
 				</button>
-				<h1 className="text-lg font-semibold">依頼を作成</h1>
+				<h1 className="text-lg font-semibold">{t("createRequest")}</h1>
 			</header>
 
 			{/* Request Content */}
@@ -318,14 +320,14 @@ const RequestCreationScreen: React.FC<{
 					htmlFor="requestContent"
 					className="block text-sm font-medium text-gray-700 mb-1"
 				>
-					依頼内容（必須）
+					{t("requestContent")}
 				</label>
 				<textarea
 					id="requestContent"
 					value={requestText}
 					onChange={(e) => setRequestText(e.target.value)}
 					className="w-full p-2 border border-gray-300 rounded-lg h-20"
-					placeholder="依頼内容を入力してください"
+					placeholder={t("enterRequestContent")}
 					required
 				/>
 			</div>
@@ -333,14 +335,14 @@ const RequestCreationScreen: React.FC<{
 			<div className="mb-4 rounded-lg border border-gray-200 bg-white p-3">
 				<div className="flex items-center justify-between">
 					<div className="text-sm font-medium text-gray-700">
-						撮影場所の指定
+						{t("selectLocation")}
 					</div>
 					<input
 						type="checkbox"
 						className="h-5 w-5 accent-green-600"
 						checked={isLocationEnabled}
 						onChange={handleToggleLocation}
-						aria-label="撮影場所の指定"
+						aria-label={t("selectLocation")}
 					/>
 				</div>
 
@@ -358,7 +360,7 @@ const RequestCreationScreen: React.FC<{
 											handleSearchLocation();
 										}
 									}}
-									placeholder="住所や施設名で検索"
+									placeholder={t("searchPlaceholder")}
 									className="flex-1 min-w-[180px] rounded-md border border-gray-200 px-3 py-2 text-sm"
 								/>
 								<button
@@ -367,7 +369,7 @@ const RequestCreationScreen: React.FC<{
 									onClick={handleSearchLocation}
 									disabled={isSearching}
 								>
-									{isSearching ? "検索中..." : "検索"}
+									{isSearching ? t("searching") : t("search")}
 								</button>
 							</div>
 							{searchError && (
@@ -397,7 +399,7 @@ const RequestCreationScreen: React.FC<{
 
 						{selectedPlaceLabel && (
 							<div className="text-xs text-gray-500">
-								選択した場所: {selectedPlaceLabel}
+								{t("selectPlace", { placeName: selectedPlaceLabel })}
 							</div>
 						)}
 						{locationError && (
@@ -414,7 +416,7 @@ const RequestCreationScreen: React.FC<{
 					className="w-full py-3 bg-indigo-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-indigo-600 transition-colors"
 					onClick={handleSubmit}
 				>
-					💳 依頼を投稿
+					💳 {t("postRequest")}
 				</button>
 			</div>
 		</div>

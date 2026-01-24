@@ -7,6 +7,8 @@ import { mockRequests } from "../data/mockRequests";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useSortedRequests } from "../hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
+import { useTranslation } from "../context/LanguageContext";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 type Screen = "home" | "request-creation" | "photo-capture";
 
@@ -24,6 +26,7 @@ const hasLocation = (
 const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
+	const { t } = useTranslation();
 	const { location: userLocation, error: locationError } = useGeolocation();
 	const sortedRequests = useSortedRequests(mockRequests, userLocation);
 	const requestsWithLocation = useMemo(
@@ -152,8 +155,9 @@ const HomeScreen: React.FC<{
 		<div className="flex flex-col bg-gray-50">
 			{/* Header */}
 			<header className="bg-white shadow-sm p-4 flex justify-between items-center">
-				<h1 className="text-xl font-bold text-indigo-500">KokoPic</h1>
+				<h1 className="text-xl font-bold text-indigo-500">{t("appTitle")}</h1>
 				<div className="flex space-x-4">
+					<LanguageSwitcher />
 					<button type="button" className="text-gray-600">
 						👤
 					</button>
@@ -168,7 +172,7 @@ const HomeScreen: React.FC<{
 				{selectedRequest ? (
 					<div className="mt-3">
 						<h3 className="text-sm font-semibold text-gray-600">
-							選択中の依頼
+							{t("selectedRequest")}
 						</h3>
 						<div className="mt-2">
 							<RequestCard
@@ -186,9 +190,9 @@ const HomeScreen: React.FC<{
 
 			{/* Request List */}
 			<div className="p-4 space-y-3">
-				<h2 className="font-semibold text-gray-700">近くの依頼一覧</h2>
+				<h2 className="font-semibold text-gray-700">{t("nearbyRequests")}</h2>
 				{sortedRequests.length === 0 && !locationError ? (
-					<div className="text-sm text-gray-500">現在地を取得中です…</div>
+					<div className="text-sm text-gray-500">{t("gettingLocation")}</div>
 				) : null}
 				{sortedRequests.map((request) => (
 					<RequestCard
@@ -204,9 +208,11 @@ const HomeScreen: React.FC<{
 				type="button"
 				className="fixed bottom-8 right-4 bg-green-accent text-white rounded-full px-4 py-3 shadow-lg hover-bg-green-600"
 				onClick={() => navigateTo("request-creation")}
-				aria-label="依頼を作成"
+				aria-label={t("createRequest")}
 			>
-				<span className="text-sm font-semibold">依頼を作成</span>
+				<span className="text-sm font-semibold">
+					{t("createRequestButton")}
+				</span>
 			</button>
 		</div>
 	);
