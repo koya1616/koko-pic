@@ -11,8 +11,14 @@ const PhotoCaptureScreen: React.FC<{
 	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
 }> = ({ navigateTo, request, showSnackbar }) => {
 	const { t } = useTranslation();
-	const { cameraStream, capturedImage, canvasRef, handleCapture, videoRef } =
-		useCamera();
+	const {
+		cameraStream,
+		capturedImage,
+		canvasRef,
+		handleCapture,
+		toggleCamera,
+		videoRef,
+	} = useCamera();
 
 	const handleSubmit = () => {
 		showSnackbar(t("photoSubmitted"), "success");
@@ -56,6 +62,15 @@ const PhotoCaptureScreen: React.FC<{
 									playsInline
 									muted
 								/>
+								{/* Camera Toggle Button */}
+								<button
+									type="button"
+									className="absolute top-4 right-4"
+									onClick={toggleCamera}
+									aria-label="Toggle camera"
+								>
+									<span className="text-2xl">↺</span>
+								</button>
 							</div>
 						) : null}
 					</div>

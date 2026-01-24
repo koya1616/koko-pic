@@ -3,6 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export const useCamera = () => {
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);
 	const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+	const [facingMode, setFacingMode] = useState<"user" | "environment">(
+		"environment",
+	);
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -23,7 +26,7 @@ export const useCamera = () => {
 	const startCamera = useCallback(async () => {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: true,
+				video: { facingMode },
 				audio: false,
 			});
 			setCameraStream(stream);
@@ -31,7 +34,7 @@ export const useCamera = () => {
 		} catch (error) {
 			console.error("Failed to start camera", error);
 		}
-	}, []);
+	}, [facingMode]);
 
 	const captureFrame = useCallback(() => {
 		const videoElement = videoRef.current;
@@ -62,6 +65,14 @@ export const useCamera = () => {
 		captureFrame();
 	}, [cameraStream, captureFrame, startCamera]);
 
+	const toggleCamera = useCallback(async () => {
+		stopCamera();
+		setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+		// Wait for state update and restart camera
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		await startCamera();
+	}, [stopCamera, startCamera]);
+
 	useEffect(() => {
 		const videoElement = videoRef.current;
 		if (!videoElement || !cameraStream) {
@@ -82,7 +93,9 @@ export const useCamera = () => {
 		canvasRef,
 		cameraStream,
 		capturedImage,
+		facingMode,
 		handleCapture,
+		toggleCamera,
 		videoRef,
 	};
 };
