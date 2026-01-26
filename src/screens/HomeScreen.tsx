@@ -8,9 +8,16 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { useSortedRequests } from "../hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import { useTranslation } from "../context/LanguageContext";
+import { useAuth } from "../context/AuthContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
-type Screen = "home" | "request-creation" | "photo-capture";
+type Screen =
+	| "home"
+	| "request-creation"
+	| "photo-capture"
+	| "signup"
+	| "signin"
+	| "account";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",
@@ -27,6 +34,7 @@ const HomeScreen: React.FC<{
 	navigateTo: (screen: Screen, request?: Request) => void;
 }> = ({ navigateTo }) => {
 	const { t } = useTranslation();
+	const { user } = useAuth();
 	const { location: userLocation, error: locationError } = useGeolocation();
 	const sortedRequests = useSortedRequests(mockRequests, userLocation);
 	const requestsWithLocation = useMemo(
@@ -158,7 +166,11 @@ const HomeScreen: React.FC<{
 				<h1 className="text-xl font-bold text-indigo-500">{t("appTitle")}</h1>
 				<div className="flex space-x-4">
 					<LanguageSwitcher />
-					<button type="button" className="text-gray-600">
+					<button
+						type="button"
+						className="text-gray-600"
+						onClick={() => navigateTo(user ? "account" : "signin")}
+					>
 						👤
 					</button>
 				</div>

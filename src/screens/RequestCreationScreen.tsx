@@ -12,7 +12,13 @@ import {
 import { geoErrorToMessage } from "../utils/geolocation";
 import { useTranslation } from "../context/LanguageContext";
 
-type Screen = "home" | "request-creation" | "photo-capture";
+type Screen =
+	| "home"
+	| "request-creation"
+	| "photo-capture"
+	| "signup"
+	| "signin"
+	| "account";
 
 type MapLabelLanguage = "ja" | "en";
 
