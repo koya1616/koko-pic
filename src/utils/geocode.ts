@@ -1,5 +1,9 @@
 import type { LatLng } from "../types/request";
-import { GEOCODE_ENDPOINT, SEARCH_RADIUS_KM } from "../constants/geocode";
+import {
+	GEOCODE_ENDPOINT,
+	REVERSE_GEOCODE_ENDPOINT,
+	SEARCH_RADIUS_KM,
+} from "../constants/geocode";
 
 export const buildGeocodeUrl = ({
 	query,
@@ -38,6 +42,28 @@ export type GeocodeResult = {
 	display_name: string;
 	lat: string;
 	lon: string;
+};
+
+export const buildReverseGeocodeUrl = ({
+	lat,
+	lng,
+	language,
+}: {
+	lat: number;
+	lng: number;
+	language: string;
+}) => {
+	const url = new URL(REVERSE_GEOCODE_ENDPOINT);
+	url.searchParams.set("format", "jsonv2");
+	url.searchParams.set("lat", lat.toString());
+	url.searchParams.set("lon", lng.toString());
+	url.searchParams.set("accept-language", language);
+	return url.toString();
+};
+
+export type ReverseGeocodeResult = {
+	display_name?: string;
+	name?: string;
 };
 
 export const parseGeocodeCoordinates = (

@@ -10,6 +10,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T09:15:00.000Z",
 		},
 		status: "open",
+		placeName: "新宿駅東口",
 		description: "駅前の混雑状況がわかる写真1枚ください",
 	},
 	{
@@ -21,6 +22,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T09:25:00.000Z",
 		},
 		status: "open",
+		placeName: "梅田駅周辺",
 		description: "コンビニ前の様子を確認したいです",
 	},
 	{
@@ -32,6 +34,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T09:35:00.000Z",
 		},
 		status: "in-progress",
+		placeName: "鶴舞公園",
 		description: "満開の桜を撮影してほしいです",
 	},
 	{
@@ -43,6 +46,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T09:45:00.000Z",
 		},
 		status: "completed",
+		placeName: "眉山ロープウェイ",
 		description: "夕方の空の写真を撮ってください",
 	},
 	{
@@ -54,6 +58,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T10:00:00.000Z",
 		},
 		status: "open",
+		placeName: "大通公園",
 		description: "公園の遊具の安全点検が必要です",
 	},
 	{
@@ -65,6 +70,7 @@ export const mockRequests: Request[] = [
 			capturedAt: "2024-01-05T10:15:00.000Z",
 		},
 		status: "open",
+		placeName: "那覇市国際通り",
 		description: "イベント会場の混雑状況を確認してください",
 	},
 ];
