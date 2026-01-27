@@ -9,7 +9,6 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { useSortedRequests } from "../hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import { useTranslation } from "../context/LanguageContext";
-import { useAuth } from "../context/AuthContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
@@ -26,7 +25,6 @@ const hasLocation = (
 const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
-	const { user } = useAuth();
 	const { location: userLocation, error: locationError } = useGeolocation();
 	const sortedRequests = useSortedRequests(mockRequests, userLocation);
 	const requestsWithLocation = useMemo(
@@ -168,7 +166,7 @@ const HomeScreen: React.FC = () => {
 					<button
 						type="button"
 						className="text-gray-600"
-						onClick={() => navigate({ to: user ? "/account" : "/signin" })}
+						onClick={() => navigate({ to: "/account" })}
 					>
 						👤
 					</button>

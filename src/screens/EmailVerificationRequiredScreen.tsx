@@ -51,7 +51,7 @@ const EmailVerificationRequiredScreen: React.FC = () => {
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigate({ to: user ? "/account" : "/signup" })}
+					onClick={() => navigate({ to: "/account" })}
 				>
 					{t("back")}
 				</button>
@@ -102,9 +102,9 @@ const EmailVerificationRequiredScreen: React.FC = () => {
 						<button
 							type="button"
 							className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition-colors"
-							onClick={() => navigate({ to: user ? "/account" : "/signup" })}
+							onClick={() => navigate({ to: "/signup" })}
 						>
-							{user ? t("goToAccount") : t("backToSignup")}
+							{t("backToSignup")}
 						</button>
 					</div>
 				</div>
