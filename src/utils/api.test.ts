@@ -43,26 +43,24 @@ describe("apiRequest", () => {
 		);
 		vi.stubGlobal("fetch", fetchSpy);
 
-		await expect(apiRequest("/api/v1/test")).rejects.toThrow(
-			"Bad request",
-		);
+		await expect(apiRequest("/api/v1/test")).rejects.toThrow("Bad request");
 	});
 
 	it("JSONを返さないエラー時はstatusTextを使う", async () => {
-		const fetchSpy = vi.fn().mockResolvedValue(
-			new Response("oops", { status: 500, statusText: "Server Error" }),
-		);
+		const fetchSpy = vi
+			.fn()
+			.mockResolvedValue(
+				new Response("oops", { status: 500, statusText: "Server Error" }),
+			);
 		vi.stubGlobal("fetch", fetchSpy);
 
-		await expect(apiRequest("/api/v1/test")).rejects.toThrow(
-			"Server Error",
-		);
+		await expect(apiRequest("/api/v1/test")).rejects.toThrow("Server Error");
 	});
 
 	it("204の場合はundefinedを返す", async () => {
-		const fetchSpy = vi.fn().mockResolvedValue(
-			new Response(null, { status: 204 }),
-		);
+		const fetchSpy = vi
+			.fn()
+			.mockResolvedValue(new Response(null, { status: 204 }));
 		vi.stubGlobal("fetch", fetchSpy);
 
 		const result = await apiRequest<void>("/api/v1/test");
@@ -87,9 +85,11 @@ describe("fetchJson", () => {
 	});
 
 	it("エラー時はstatusTextで例外を投げる", async () => {
-		const fetchSpy = vi.fn().mockResolvedValue(
-			new Response("ng", { status: 404, statusText: "Not Found" }),
-		);
+		const fetchSpy = vi
+			.fn()
+			.mockResolvedValue(
+				new Response("ng", { status: 404, statusText: "Not Found" }),
+			);
 		vi.stubGlobal("fetch", fetchSpy);
 
 		await expect(fetchJson("/test")).rejects.toThrow("Not Found");

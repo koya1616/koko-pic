@@ -2,6 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
+import { validateSignupPassword } from "../utils/signupValidation";
 
 type Screen =
 	| "home"
@@ -27,21 +28,12 @@ const SignupScreen: React.FC<{
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (password !== confirmPassword) {
-			showSnackbar(t("passwordsDoNotMatch"), "error");
-			return;
-		}
-
-		if (password.length < 8) {
-			showSnackbar(t("passwordTooShort"), "error");
-			return;
-		}
-
-		// Check if password contains both letters and numbers
-		const hasLetter = /[a-zA-Z]/.test(password);
-		const hasNumber = /\d/.test(password);
-		if (!hasLetter || !hasNumber) {
-			showSnackbar(t("passwordRequirements"), "error");
+		const validationError = validateSignupPassword({
+			password,
+			confirmPassword,
+		});
+		if (validationError) {
+			showSnackbar(t(validationError), "error");
 			return;
 		}
 
