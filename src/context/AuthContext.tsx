@@ -1,13 +1,7 @@
 import type React from "react";
-import {
-	createContext,
-	useContext,
-	useState,
-	useEffect,
-	useCallback,
-} from "react";
+import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import type { ApiUser, LoginResponse, VerifyEmailResponse } from "../types/api";
+import type { ApiUser, LoginResponse } from "../types/api";
 import { apiRequest } from "../utils/api";
 import { STORAGE_KEYS } from "../constants/storage";
 
@@ -22,7 +16,6 @@ interface AuthContextType {
 		displayName: string,
 		password: string,
 	) => Promise<void>;
-	verifyEmail: (token: string) => Promise<void>;
 	isLoading: boolean;
 }
 
@@ -78,29 +71,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
-	const verifyEmail = async (token: string) => {
-		const data = await apiRequest<VerifyEmailResponse>(
-			`/api/v1/verify-email/${token}`,
-		);
-
-		const { token: authToken, user_id, email, display_name } = data;
-
-		localStorage.setItem(STORAGE_KEYS.authToken, authToken);
-		setToken(authToken);
-
-		setUser({
-			id: user_id,
-			email: email,
-			display_name: display_name,
-		});
-	};
-
 	const value = {
 		user,
 		token,
 		login,
 		signup,
-		verifyEmail,
 		isLoading,
 	};
 
