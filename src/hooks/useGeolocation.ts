@@ -1,33 +1,69 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../context/LanguageContext";
 import type { LatLng } from "../types/request";
+import {
+	markPermissionGranted,
+	shouldRequestPermissionOnce,
+} from "../utils/permissionOnce";
 
 export const useGeolocation = () => {
+	const { t } = useTranslation();
 	const [location, setLocation] = useState<LatLng | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (!navigator.geolocation) {
-			setError("この環境では位置情報が利用できません。");
-			return;
-		}
+		let isActive = true;
 
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				setLocation({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-				});
-			},
-			(geoError) => {
-				setError(
-					geoError.code === geoError.PERMISSION_DENIED
-						? "位置情報の利用が許可されていません。"
-						: "位置情報の取得に失敗しました。",
-				);
-			},
-			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
-		);
-	}, []);
+		const requestLocation = async () => {
+			if (!navigator.geolocation) {
+				if (isActive) {
+					setError(t("locationUnavailable"));
+				}
+				return;
+			}
+
+			const canRequest = await shouldRequestPermissionOnce(
+				"geolocation",
+				"geolocation",
+			);
+			if (!canRequest) {
+				if (isActive) {
+					setError(t("locationPermissionOnce"));
+				}
+				return;
+			}
+
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					if (!isActive) {
+						return;
+					}
+					markPermissionGranted("geolocation");
+					setLocation({
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+					});
+				},
+				(geoError) => {
+					if (!isActive) {
+						return;
+					}
+					setError(
+						geoError.code === geoError.PERMISSION_DENIED
+							? t("locationPermissionDenied")
+							: t("geolocationFailed"),
+					);
+				},
+				{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+			);
+		};
+
+		void requestLocation();
+
+		return () => {
+			isActive = false;
+		};
+	}, [t]);
 
 	return { location, error };
 };

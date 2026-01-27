@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	markPermissionGranted,
+	shouldRequestPermissionOnce,
+} from "../utils/permissionOnce";
 
 export const useCamera = () => {
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -23,18 +27,30 @@ export const useCamera = () => {
 		setCameraStream(null);
 	}, [cameraStream, stopStream]);
 
-	const startCamera = useCallback(async () => {
-		try {
-			const stream = await navigator.mediaDevices.getUserMedia({
-				video: { facingMode },
-				audio: false,
-			});
-			setCameraStream(stream);
-			setCapturedImage(null);
-		} catch (error) {
-			console.error("Failed to start camera", error);
-		}
-	}, [facingMode]);
+	const startCamera = useCallback(
+		async (mode: "user" | "environment" = facingMode) => {
+			try {
+				const canRequest = await shouldRequestPermissionOnce(
+					"camera",
+					"camera",
+				);
+				if (!canRequest) {
+					return;
+				}
+				const stream = await navigator.mediaDevices.getUserMedia({
+					video: { facingMode: mode },
+					audio: false,
+				});
+				markPermissionGranted("camera");
+				setCameraStream(stream);
+				setFacingMode(mode);
+				setCapturedImage(null);
+			} catch (error) {
+				console.error("Failed to start camera", error);
+			}
+		},
+		[facingMode],
+	);
 
 	const captureFrame = useCallback(() => {
 		const videoElement = videoRef.current;
@@ -66,12 +82,24 @@ export const useCamera = () => {
 	}, [cameraStream, captureFrame, startCamera]);
 
 	const toggleCamera = useCallback(async () => {
+		const nextFacingMode = facingMode === "user" ? "environment" : "user";
+		const currentTrack = cameraStream?.getVideoTracks()[0];
+
+		if (currentTrack?.applyConstraints) {
+			try {
+				await currentTrack.applyConstraints({
+					facingMode: { ideal: nextFacingMode },
+				});
+				setFacingMode(nextFacingMode);
+				return;
+			} catch (error) {
+				console.warn("Failed to switch camera via constraints", error);
+			}
+		}
+
 		stopCamera();
-		setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
-		// Wait for state update and restart camera
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		await startCamera();
-	}, [stopCamera, startCamera]);
+		await startCamera(nextFacingMode);
+	}, [cameraStream, facingMode, startCamera, stopCamera]);
 
 	useEffect(() => {
 		const videoElement = videoRef.current;

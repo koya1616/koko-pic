@@ -14,6 +14,7 @@
 	"searchFailed": "Search failed. Please try again later.",
 	"locationUnavailable": "Location services are unavailable in this environment.",
 	"geolocationFailed": "Failed to get location.",
+	"locationPermissionOnce": "Location permission is only requested once per session.",
 	"captureStart": "Start Capture",
 	"shutter": "Shutter",
 	"retake": "Retake",

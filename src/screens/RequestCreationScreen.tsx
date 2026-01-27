@@ -10,6 +10,10 @@ import {
 	parseGeocodeCoordinates,
 } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
+import {
+	markPermissionGranted,
+	shouldRequestPermissionOnce,
+} from "../utils/permissionOnce";
 import { fetchJson } from "../utils/api";
 import { useTranslation } from "../context/LanguageContext";
 import type { Screen } from "../types/screen";
@@ -167,36 +171,66 @@ const RequestCreationScreen: React.FC<{
 			return;
 		}
 
-		if (!navigator.geolocation) {
-			setLocationError(t("locationUnavailable"));
-			return;
-		}
+		let isActive = true;
 
-		setLocationError(null);
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				const currentLocation = {
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-				};
-				setDefaultCenter(currentLocation);
-				setSelectedLocation((prev) =>
-					prev
-						? prev
-						: {
-								...currentLocation,
-								source: "gps",
-								accuracy: Math.round(position.coords.accuracy),
-								capturedAt: new Date().toISOString(),
-							},
-				);
-				setSelectedPlaceLabel(null);
-			},
-			(geoError) => {
-				setLocationError(geoErrorToMessage(geoError));
-			},
-			{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
-		);
+		const requestLocation = async () => {
+			if (!navigator.geolocation) {
+				if (isActive) {
+					setLocationError(t("locationUnavailable"));
+				}
+				return;
+			}
+
+			const canRequest = await shouldRequestPermissionOnce(
+				"geolocation",
+				"geolocation",
+			);
+			if (!canRequest) {
+				if (isActive) {
+					setLocationError(t("locationPermissionOnce"));
+				}
+				return;
+			}
+
+			setLocationError(null);
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					if (!isActive) {
+						return;
+					}
+					markPermissionGranted("geolocation");
+					const currentLocation = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+					};
+					setDefaultCenter(currentLocation);
+					setSelectedLocation((prev) =>
+						prev
+							? prev
+							: {
+									...currentLocation,
+									source: "gps",
+									accuracy: Math.round(position.coords.accuracy),
+									capturedAt: new Date().toISOString(),
+								},
+					);
+					setSelectedPlaceLabel(null);
+				},
+				(geoError) => {
+					if (!isActive) {
+						return;
+					}
+					setLocationError(geoErrorToMessage(geoError));
+				},
+				{ enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+			);
+		};
+
+		void requestLocation();
+
+		return () => {
+			isActive = false;
+		};
 	}, [isLocationEnabled, t]);
 
 	useEffect(() => {
