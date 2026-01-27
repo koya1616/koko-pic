@@ -20,6 +20,7 @@ import {
 import { fetchJson } from "../utils/api";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 type MapLabelLanguage = "ja" | "en";
 
@@ -65,6 +66,8 @@ const applyMapLabelLanguage = (
 };
 
 const RequestCreationScreen: React.FC = () => {
+	useAuthRedirect();
+
 	const navigate = useNavigate();
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();

@@ -4,8 +4,11 @@ import { useCamera } from "../hooks/useCamera";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
 import { mockRequests } from "../data/mockRequests";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 const PhotoCaptureScreen: React.FC = () => {
+	useAuthRedirect();
+
 	const navigate = useNavigate();
 	const { requestId } = useParams({ from: "/photo/$requestId" });
 	const { showSnackbar } = useSnackbar();

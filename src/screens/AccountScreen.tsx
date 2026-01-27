@@ -2,8 +2,11 @@ import type React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 const AccountScreen: React.FC = () => {
+	useAuthRedirect();
+
 	const navigate = useNavigate();
 	const { user, logout } = useAuth();
 	const { t } = useTranslation();

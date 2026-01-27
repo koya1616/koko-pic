@@ -48,6 +48,7 @@ export const apiRequest = async <T>(
 
 	if (response.status === 401) {
 		localStorage.removeItem(STORAGE_KEYS.authToken);
+		window.location.href = "/signin";
 		throw new Error("Unauthorized: Please log in again.");
 	}
 
