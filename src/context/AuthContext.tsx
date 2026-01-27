@@ -7,12 +7,10 @@ import {
 	useCallback,
 } from "react";
 import type { ReactNode } from "react";
+import type { ApiUser, LoginResponse, VerifyEmailResponse } from "../types/api";
+import { apiRequest } from "../utils/api";
 
-interface User {
-	id: number;
-	email: string;
-	display_name: string;
-}
+type User = Pick<ApiUser, "id" | "email" | "display_name">;
 
 interface AuthContextType {
 	user: User | null;
@@ -41,27 +39,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 	const fetchUserInfo = useCallback(async (authToken: string) => {
 		try {
-			const response = await fetch(
-				`${import.meta.env.VITE_API_BASE_URL || "http://0.0.0.0:8000"}/api/v1/users/me`,
-				{
-					headers: {
-						Authorization: `Bearer ${authToken}`,
-					},
-				},
-			);
-
-			if (response.ok) {
-				const userData = await response.json();
-				setUser({
-					id: userData.id,
-					email: userData.email,
-					display_name: userData.display_name,
-				});
-			} else {
-				localStorage.removeItem("authToken");
-				setToken(null);
-				setUser(null);
-			}
+			const userData = await apiRequest<ApiUser>("/api/v1/users/me", {
+				token: authToken,
+			});
+			setUser({
+				id: userData.id,
+				email: userData.email,
+				display_name: userData.display_name,
+			});
 		} catch (error) {
 			console.error("Error fetching user info:", error);
 			localStorage.removeItem("authToken");
@@ -85,23 +70,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const login = async (email: string, password: string) => {
 		setIsLoading(true);
 		try {
-			const response = await fetch(
-				`${import.meta.env.VITE_API_BASE_URL || "http://0.0.0.0:8000"}/api/v1/login`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ email, password }),
-				},
-			);
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || "Login failed");
-			}
-
-			const data = await response.json();
+			const data = await apiRequest<LoginResponse>("/api/v1/login", {
+				method: "POST",
+				body: { email, password },
+			});
 			const { token, user_id, email: userEmail, display_name } = data;
 
 			localStorage.setItem("authToken", token);
@@ -125,21 +97,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await fetch(
-				`${import.meta.env.VITE_API_BASE_URL || "http://0.0.0.0:8000"}/api/v1/users`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ email, display_name: displayName, password }),
-				},
-			);
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || "Signup failed");
-			}
+			await apiRequest<ApiUser>("/api/v1/users", {
+				method: "POST",
+				body: { email, display_name: displayName, password },
+			});
 		} catch (error) {
 			setIsLoading(false);
 			throw error;
@@ -147,22 +108,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	};
 
 	const verifyEmail = async (token: string) => {
-		const response = await fetch(
-			`${import.meta.env.VITE_API_BASE_URL || "http://0.0.0.0:8000"}/api/v1/verify-email/${token}`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			},
+		const data = await apiRequest<VerifyEmailResponse>(
+			`/api/v1/verify-email/${token}`,
 		);
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.error || "Email verification failed");
-		}
-
-		const data = await response.json();
 
 		const { token: authToken, user_id, email, display_name } = data;
 

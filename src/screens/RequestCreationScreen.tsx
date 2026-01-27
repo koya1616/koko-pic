@@ -10,6 +10,7 @@ import {
 	parseGeocodeCoordinates,
 } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
+import { fetchJson } from "../utils/api";
 import { useTranslation } from "../context/LanguageContext";
 
 type Screen =
@@ -264,7 +265,7 @@ const RequestCreationScreen: React.FC<{
 	const handleSearchLocation = async () => {
 		const query = searchQuery.trim();
 		if (!query) {
-			setSearchError(t("searchPlaceholder")); // Using a similar translation key
+			setSearchError(t("searchPlaceholder"));
 			setSearchResults([]);
 			return;
 		}
@@ -272,11 +273,9 @@ const RequestCreationScreen: React.FC<{
 		setSearchError(null);
 		setIsSearching(true);
 		try {
-			const response = await fetch(buildGeocodeUrlForQuery(query));
-			if (!response.ok) {
-				throw new Error("Geocoding failed.");
-			}
-			const results = (await response.json()) as GeocodeResult[];
+			const results = await fetchJson<GeocodeResult[]>(
+				buildGeocodeUrlForQuery(query),
+			);
 			setSearchResults(results);
 			if (results.length === 0) {
 				setSearchError(t("noResults"));
@@ -292,7 +291,7 @@ const RequestCreationScreen: React.FC<{
 	const handleSelectSearchResult = (result: GeocodeResult) => {
 		const coordinates = parseGeocodeCoordinates(result);
 		if (!coordinates) {
-			setSearchError(t("geolocationFailed")); // Using a similar translation key
+			setSearchError(t("geolocationFailed"));
 			return;
 		}
 
