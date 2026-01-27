@@ -17,7 +17,6 @@ interface AuthContextType {
 	user: User | null;
 	token: string | null;
 	login: (email: string, password: string) => Promise<void>;
-	logout: () => void;
 	signup: (
 		email: string,
 		displayName: string,
@@ -37,36 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [user, setUser] = useState<User | null>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	const fetchUserInfo = useCallback(async (authToken: string) => {
-		try {
-			const userData = await apiRequest<ApiUser>("/api/v1/users/me", {
-				token: authToken,
-			});
-			setUser({
-				id: userData.id,
-				email: userData.email,
-				display_name: userData.display_name,
-			});
-		} catch (error) {
-			console.error("Error fetching user info:", error);
-			localStorage.removeItem(STORAGE_KEYS.authToken);
-			setToken(null);
-			setUser(null);
-		} finally {
-			setIsLoading(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		const storedToken = localStorage.getItem(STORAGE_KEYS.authToken);
-		if (storedToken) {
-			setToken(storedToken);
-			fetchUserInfo(storedToken);
-		} else {
-			setIsLoading(false);
-		}
-	}, [fetchUserInfo]);
 
 	const login = async (email: string, password: string) => {
 		setIsLoading(true);
@@ -126,17 +95,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		});
 	};
 
-	const logout = () => {
-		localStorage.removeItem(STORAGE_KEYS.authToken);
-		setToken(null);
-		setUser(null);
-	};
-
 	const value = {
 		user,
 		token,
 		login,
-		logout,
 		signup,
 		verifyEmail,
 		isLoading,
