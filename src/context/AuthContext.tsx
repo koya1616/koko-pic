@@ -162,12 +162,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			throw new Error(errorData.error || "Email verification failed");
 		}
 
-		const userData = await response.json();
+		const data = await response.json();
+
+		const { token: authToken, user_id, email, display_name } = data;
+
+		localStorage.setItem("authToken", authToken);
+		setToken(authToken);
 
 		setUser({
-			id: userData.id,
-			email: userData.email,
-			display_name: userData.display_name,
+			id: user_id,
+			email: email,
+			display_name: display_name,
 		});
 	};
 
