@@ -1,18 +1,29 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
+import type { LoginResponse } from "../types/api";
+import { apiRequest } from "../utils/api";
+import { STORAGE_KEYS } from "../constants/storage";
 
 const SigninScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { showSnackbar } = useSnackbar();
-	const { login } = useAuth();
 	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+
+	const login = async (email: string, password: string) => {
+		const data = await apiRequest<LoginResponse>("/api/v1/login", {
+			method: "POST",
+			body: { email, password },
+		});
+		const { token } = data;
+
+		localStorage.setItem(STORAGE_KEYS.authToken, token);
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

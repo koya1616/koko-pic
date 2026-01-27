@@ -1,7 +1,7 @@
 import type React from "react";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import type { ApiUser, LoginResponse } from "../types/api";
+import type { ApiUser } from "../types/api";
 import { apiRequest } from "../utils/api";
 import { STORAGE_KEYS } from "../constants/storage";
 
@@ -10,7 +10,6 @@ type User = Pick<ApiUser, "id" | "email" | "display_name">;
 interface AuthContextType {
 	user: User | null;
 	token: string | null;
-	login: (email: string, password: string) => Promise<void>;
 	signup: (
 		email: string,
 		displayName: string,
@@ -26,32 +25,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-	const [user, setUser] = useState<User | null>(null);
-	const [token, setToken] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	const login = async (email: string, password: string) => {
-		setIsLoading(true);
-		try {
-			const data = await apiRequest<LoginResponse>("/api/v1/login", {
-				method: "POST",
-				body: { email, password },
-			});
-			const { token, user_id, email: userEmail, display_name } = data;
-
-			localStorage.setItem(STORAGE_KEYS.authToken, token);
-
-			setToken(token);
-			setUser({
-				id: user_id,
-				email: userEmail,
-				display_name,
-			});
-		} catch (error) {
-			setIsLoading(false);
-			throw error;
-		}
-	};
+	const [user, _setUser] = useState<User | null>(null);
+	const [token, _setToken] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const signup = async (
 		email: string,
@@ -74,7 +50,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const value = {
 		user,
 		token,
-		login,
 		signup,
 		isLoading,
 	};
