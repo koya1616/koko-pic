@@ -1,16 +1,46 @@
 import type React from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import type { Screen } from "../types/screen";
+import { apiRequest } from "../utils/api";
 
 const EmailVerificationRequiredScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
 	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo }) => {
+}> = ({ navigateTo, showSnackbar }) => {
 	const { user } = useAuth();
 	const { t } = useTranslation();
 
-	const userEmail = user?.email || "";
+	const [isSending, setIsSending] = useState(false);
+
+	const storedEmail = localStorage.getItem("pendingVerificationEmail") || "";
+	const userEmail = user?.email || storedEmail;
+	const verificationMessage = userEmail
+		? t("verificationRequiredMessage", { email: userEmail })
+		: t("pleaseVerifyEmail");
+
+	const handleResend = async (event: React.FormEvent) => {
+		event.preventDefault();
+		if (!userEmail || isSending) {
+			return;
+		}
+
+		setIsSending(true);
+		try {
+			await apiRequest<void>("/api/v1/resend-verification", {
+				method: "POST",
+				body: { email: userEmail },
+			});
+			showSnackbar(t("verificationSent"), "success");
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : t("resendVerificationFailed");
+			showSnackbar(errorMessage, "error");
+		} finally {
+			setIsSending(false);
+		}
+	};
 
 	return (
 		<div className="flex h-full flex-col bg-gray-50 p-4">
@@ -50,9 +80,22 @@ const EmailVerificationRequiredScreen: React.FC<{
 					<h2 className="text-xl font-bold text-gray-900 mb-2">
 						{t("verifyYourEmail")}
 					</h2>
-					<p className="text-gray-600 mb-4">
-						{t("verificationRequiredMessage", { email: userEmail })}
-					</p>
+					<p className="text-gray-600 mb-4">{verificationMessage}</p>
+					{userEmail && (
+						<form onSubmit={handleResend} className="space-y-3">
+							<button
+								type="submit"
+								className={`w-full px-4 py-2 text-white rounded-lg font-medium transition-colors ${
+									isSending
+										? "bg-indigo-300"
+										: "bg-indigo-500 hover:bg-indigo-600"
+								}`}
+								disabled={isSending}
+							>
+								{isSending ? t("sending") : t("resendVerificationEmail")}
+							</button>
+						</form>
+					)}
 					<div className="mt-6">
 						<button
 							type="button"

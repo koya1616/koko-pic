@@ -101,6 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				method: "POST",
 				body: { email, display_name: displayName, password },
 			});
+			localStorage.setItem("pendingVerificationEmail", email);
 		} catch (error) {
 			setIsLoading(false);
 			throw error;
