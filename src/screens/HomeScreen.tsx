@@ -10,14 +10,7 @@ import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import { useTranslation } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account";
+import type { Screen } from "../types/screen";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",

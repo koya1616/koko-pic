@@ -11,16 +11,7 @@ import EmailVerificationScreen from "./screens/EmailVerificationScreen";
 import EmailVerificationRequiredScreen from "./screens/EmailVerificationRequiredScreen";
 import Snackbar from "./components/Snackbar";
 import type { Request } from "./types/request";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account"
-	| "email-verification"
-	| "email-verification-required";
+import type { Screen } from "./types/screen";
 
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<Screen>("home");

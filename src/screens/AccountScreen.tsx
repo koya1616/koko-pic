@@ -1,14 +1,7 @@
 import type React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account";
+import type { Screen } from "../types/screen";
 
 const AccountScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;

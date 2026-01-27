@@ -2,14 +2,7 @@ import type React from "react";
 import type { Request } from "../types/request";
 import { useCamera } from "../hooks/useCamera";
 import { useTranslation } from "../context/LanguageContext";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account";
+import type { Screen } from "../types/screen";
 
 const PhotoCaptureScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;

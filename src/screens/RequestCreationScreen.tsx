@@ -12,14 +12,7 @@ import {
 import { geoErrorToMessage } from "../utils/geolocation";
 import { fetchJson } from "../utils/api";
 import { useTranslation } from "../context/LanguageContext";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account";
+import type { Screen } from "../types/screen";
 
 type MapLabelLanguage = "ja" | "en";
 

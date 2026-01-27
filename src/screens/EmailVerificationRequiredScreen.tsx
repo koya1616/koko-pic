@@ -1,15 +1,7 @@
 import type React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account"
-	| "email-verification-required";
+import type { Screen } from "../types/screen";
 
 const EmailVerificationRequiredScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;

@@ -3,15 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import { validateSignupPassword } from "../utils/signupValidation";
-
-type Screen =
-	| "home"
-	| "request-creation"
-	| "photo-capture"
-	| "signup"
-	| "signin"
-	| "account"
-	| "email-verification-required";
+import type { Screen } from "../types/screen";
 
 const SignupScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
