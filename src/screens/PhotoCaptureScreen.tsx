@@ -1,14 +1,14 @@
 import type React from "react";
-import type { Request } from "../types/request";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCamera } from "../hooks/useCamera";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
+import { useSnackbar } from "../context/SnackbarContext";
+import { mockRequests } from "../data/mockRequests";
 
-const PhotoCaptureScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	request: Request | null;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo, request, showSnackbar }) => {
+const PhotoCaptureScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { requestId } = useParams({ from: "/photo/$requestId" });
+	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
 	const {
 		cameraStream,
@@ -19,9 +19,11 @@ const PhotoCaptureScreen: React.FC<{
 		videoRef,
 	} = useCamera();
 
+	const request = mockRequests.find((r) => String(r.id) === requestId) ?? null;
+
 	const handleSubmit = () => {
 		showSnackbar(t("photoSubmitted"), "success");
-		navigateTo("home");
+		navigate({ to: "/" });
 	};
 
 	return (
@@ -31,7 +33,7 @@ const PhotoCaptureScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("home")}
+					onClick={() => navigate({ to: "/" })}
 				>
 					{t("back")}
 				</button>

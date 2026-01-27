@@ -1,14 +1,14 @@
 import type React from "react";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
+import { useSnackbar } from "../context/SnackbarContext";
 import { validateSignupPassword } from "../utils/signupValidation";
-import type { Screen } from "../types/screen";
 
-const SignupScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo, showSnackbar }) => {
+const SignupScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { showSnackbar } = useSnackbar();
 	const { signup } = useAuth();
 	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
@@ -32,7 +32,7 @@ const SignupScreen: React.FC<{
 		setIsLoading(true);
 		try {
 			await signup(email, displayName, password);
-			navigateTo("email-verification-required");
+			navigate({ to: "/email-verification-required" });
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : t("signupFailed");
@@ -49,7 +49,7 @@ const SignupScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("signin")}
+					onClick={() => navigate({ to: "/signin" })}
 				>
 					{t("back")}
 				</button>
@@ -147,7 +147,7 @@ const SignupScreen: React.FC<{
 					<button
 						type="button"
 						className="text-indigo-500 font-medium"
-						onClick={() => navigateTo("signin")}
+						onClick={() => navigate({ to: "/signin" })}
 					>
 						{t("signin")}
 					</button>

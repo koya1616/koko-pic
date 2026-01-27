@@ -1,18 +1,16 @@
 import type React from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
 
-const AccountScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo }) => {
+const AccountScreen: React.FC = () => {
+	const navigate = useNavigate();
 	const { user, logout } = useAuth();
 	const { t } = useTranslation();
 
 	const handleLogout = () => {
 		logout();
-		navigateTo("home");
+		navigate({ to: "/" });
 	};
 
 	if (!user) {
@@ -22,7 +20,7 @@ const AccountScreen: React.FC<{
 					<button
 						type="button"
 						className="mr-2 text-gray-600"
-						onClick={() => navigateTo("home")}
+						onClick={() => navigate({ to: "/" })}
 					>
 						{t("back")}
 					</button>
@@ -42,7 +40,7 @@ const AccountScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("home")}
+					onClick={() => navigate({ to: "/" })}
 				>
 					{t("back")}
 				</button>

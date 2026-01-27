@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
 import type { Request, RequestLocation, RequestStatus } from "../types/request";
 import RequestCard from "../components/RequestCard";
@@ -10,7 +11,6 @@ import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import { useTranslation } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import type { Screen } from "../types/screen";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",
@@ -23,9 +23,8 @@ const hasLocation = (
 ): request is Request & { location: RequestLocation } =>
 	Boolean(request.location);
 
-const HomeScreen: React.FC<{
-	navigateTo: (screen: Screen, request?: Request) => void;
-}> = ({ navigateTo }) => {
+const HomeScreen: React.FC = () => {
+	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const { user } = useAuth();
 	const { location: userLocation, error: locationError } = useGeolocation();
@@ -152,6 +151,13 @@ const HomeScreen: React.FC<{
 		}
 	}, [requestsWithLocation, userLocation]);
 
+	const handleRequestSelect = (selected: Request) => {
+		navigate({
+			to: "/photo/$requestId",
+			params: { requestId: String(selected.id) },
+		});
+	};
+
 	return (
 		<div className="flex flex-col bg-gray-50">
 			{/* Header */}
@@ -162,7 +168,7 @@ const HomeScreen: React.FC<{
 					<button
 						type="button"
 						className="text-gray-600"
-						onClick={() => navigateTo(user ? "account" : "signin")}
+						onClick={() => navigate({ to: user ? "/account" : "/signin" })}
 					>
 						👤
 					</button>
@@ -182,7 +188,7 @@ const HomeScreen: React.FC<{
 						<div className="mt-2">
 							<RequestCard
 								request={selectedRequest}
-								onSelect={(selected) => navigateTo("photo-capture", selected)}
+								onSelect={handleRequestSelect}
 								className="border-sky-300"
 							/>
 						</div>
@@ -203,7 +209,7 @@ const HomeScreen: React.FC<{
 					<RequestCard
 						key={request.id}
 						request={request}
-						onSelect={(selected) => navigateTo("photo-capture", selected)}
+						onSelect={handleRequestSelect}
 					/>
 				))}
 			</div>
@@ -212,7 +218,7 @@ const HomeScreen: React.FC<{
 			<button
 				type="button"
 				className="fixed bottom-8 right-4 bg-green-accent text-white rounded-full px-4 py-3 shadow-lg hover-bg-green-600"
-				onClick={() => navigateTo("request-creation")}
+				onClick={() => navigate({ to: "/request/new" })}
 				aria-label={t("createRequest")}
 			>
 				<span className="text-sm font-semibold">

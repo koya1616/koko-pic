@@ -1,14 +1,14 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
+import { useSnackbar } from "../context/SnackbarContext";
 
-const EmailVerificationScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-	token: string;
-}> = ({ navigateTo, showSnackbar, token }) => {
+const EmailVerificationScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { token } = useParams({ from: "/verify-email/$token" });
+	const { showSnackbar } = useSnackbar();
 	const { verifyEmail } = useAuth();
 	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +45,7 @@ const EmailVerificationScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("home")}
+					onClick={() => navigate({ to: "/" })}
 				>
 					{t("back")}
 				</button>
@@ -86,7 +86,7 @@ const EmailVerificationScreen: React.FC<{
 						<button
 							type="button"
 							className="mt-6 px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition-colors"
-							onClick={() => navigateTo("account")}
+							onClick={() => navigate({ to: "/account" })}
 						>
 							{t("goToAccount")}
 						</button>
@@ -120,7 +120,7 @@ const EmailVerificationScreen: React.FC<{
 						<button
 							type="button"
 							className="mt-6 px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition-colors"
-							onClick={() => navigateTo("account")}
+							onClick={() => navigate({ to: "/account" })}
 						>
 							{t("goToAccount")}
 						</button>

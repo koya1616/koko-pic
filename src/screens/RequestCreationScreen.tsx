@@ -1,5 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
 import { useRequestForm } from "../hooks/useRequestForm";
 import type { LatLng, RequestLocation } from "../types/request";
@@ -18,7 +19,7 @@ import {
 } from "../utils/permissionOnce";
 import { fetchJson } from "../utils/api";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
+import { useSnackbar } from "../context/SnackbarContext";
 
 type MapLabelLanguage = "ja" | "en";
 
@@ -63,10 +64,9 @@ const applyMapLabelLanguage = (
 	}
 };
 
-const RequestCreationScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo, showSnackbar }) => {
+const RequestCreationScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
 	const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 	const [selectedLocation, setSelectedLocation] =
@@ -108,8 +108,8 @@ const RequestCreationScreen: React.FC<{
 
 	const handlePost = useCallback(() => {
 		showSnackbar(t("requestPosted"), "success");
-		navigateTo("home");
-	}, [navigateTo, showSnackbar, t]);
+		navigate({ to: "/" });
+	}, [navigate, showSnackbar, t]);
 
 	const { handleSubmit, requestText, setRequestText } = useRequestForm({
 		onSubmit: handlePost,
@@ -441,7 +441,7 @@ const RequestCreationScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("home")}
+					onClick={() => navigate({ to: "/" })}
 				>
 					{t("back")}
 				</button>

@@ -1,15 +1,15 @@
 import type React from "react";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
+import { useSnackbar } from "../context/SnackbarContext";
 import { apiRequest } from "../utils/api";
 import { STORAGE_KEYS } from "../constants/storage";
 
-const EmailVerificationRequiredScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo, showSnackbar }) => {
+const EmailVerificationRequiredScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { showSnackbar } = useSnackbar();
 	const { user } = useAuth();
 	const { t } = useTranslation();
 
@@ -51,7 +51,7 @@ const EmailVerificationRequiredScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo(user ? "account" : "signup")}
+					onClick={() => navigate({ to: user ? "/account" : "/signup" })}
 				>
 					{t("back")}
 				</button>
@@ -102,7 +102,7 @@ const EmailVerificationRequiredScreen: React.FC<{
 						<button
 							type="button"
 							className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition-colors"
-							onClick={() => navigateTo(user ? "account" : "signup")}
+							onClick={() => navigate({ to: user ? "/account" : "/signup" })}
 						>
 							{user ? t("goToAccount") : t("backToSignup")}
 						</button>

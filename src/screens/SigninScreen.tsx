@@ -1,13 +1,13 @@
 import type React from "react";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
-import type { Screen } from "../types/screen";
+import { useSnackbar } from "../context/SnackbarContext";
 
-const SigninScreen: React.FC<{
-	navigateTo: (screen: Screen) => void;
-	showSnackbar: (message: string, type?: "success" | "error" | "info") => void;
-}> = ({ navigateTo, showSnackbar }) => {
+const SigninScreen: React.FC = () => {
+	const navigate = useNavigate();
+	const { showSnackbar } = useSnackbar();
 	const { login } = useAuth();
 	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
@@ -20,7 +20,7 @@ const SigninScreen: React.FC<{
 		setIsLoading(true);
 		try {
 			await login(email, password);
-			navigateTo("home");
+			navigate({ to: "/" });
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : t("loginFailed");
@@ -37,7 +37,7 @@ const SigninScreen: React.FC<{
 				<button
 					type="button"
 					className="mr-2 text-gray-600"
-					onClick={() => navigateTo("home")}
+					onClick={() => navigate({ to: "/" })}
 				>
 					{t("back")}
 				</button>
@@ -99,7 +99,7 @@ const SigninScreen: React.FC<{
 					<button
 						type="button"
 						className="text-indigo-500 font-medium"
-						onClick={() => navigateTo("signup")}
+						onClick={() => navigate({ to: "/signup" })}
 					>
 						{t("signup")}
 					</button>
