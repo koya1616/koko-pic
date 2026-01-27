@@ -45,6 +45,11 @@ export const apiRequest = async <T>(
 		signal: options?.signal,
 	});
 
+	if (response.status === 401) {
+		localStorage.removeItem("authToken");
+		throw new Error("Unauthorized: Please log in again.");
+	}
+
 	if (!response.ok) {
 		const message = await parseErrorMessage(response);
 		throw new Error(message);
