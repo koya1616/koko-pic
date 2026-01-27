@@ -71,6 +71,8 @@ const RequestCreationScreen: React.FC<{
 	const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 	const [selectedLocation, setSelectedLocation] =
 		useState<RequestLocation | null>(null);
+	const [currentLocation, setCurrentLocation] =
+		useState<RequestLocation | null>(null);
 	const [locationError, setLocationError] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
@@ -82,7 +84,8 @@ const RequestCreationScreen: React.FC<{
 	const [defaultCenter, setDefaultCenter] = useState<LatLng>(FALLBACK_CENTER);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
-	const markerRef = useRef<maplibregl.Marker | null>(null);
+	const selectedMarkerRef = useRef<maplibregl.Marker | null>(null);
+	const currentMarkerRef = useRef<maplibregl.Marker | null>(null);
 	const popupRef = useRef<maplibregl.Popup | null>(null);
 	const reverseLookupIdRef = useRef(0);
 	const mapLabelLanguage = useMemo(
@@ -98,9 +101,9 @@ const RequestCreationScreen: React.FC<{
 			buildGeocodeUrl({
 				query,
 				language: mapLabelLanguage,
-				selectedLocation,
+				selectedLocation: selectedLocation ?? currentLocation,
 			}),
-		[selectedLocation, mapLabelLanguage],
+		[selectedLocation, currentLocation, mapLabelLanguage],
 	);
 
 	const handlePost = useCallback(() => {
@@ -118,7 +121,8 @@ const RequestCreationScreen: React.FC<{
 			if (mapRef.current) {
 				mapRef.current.remove();
 				mapRef.current = null;
-				markerRef.current = null;
+				selectedMarkerRef.current = null;
+				currentMarkerRef.current = null;
 				popupRef.current = null;
 			}
 		};
@@ -178,7 +182,8 @@ const RequestCreationScreen: React.FC<{
 			if (mapRef.current) {
 				mapRef.current.remove();
 				mapRef.current = null;
-				markerRef.current = null;
+				selectedMarkerRef.current = null;
+				currentMarkerRef.current = null;
 				popupRef.current = null;
 			}
 			return;
@@ -188,7 +193,7 @@ const RequestCreationScreen: React.FC<{
 			return;
 		}
 
-		const center = selectedLocation ?? defaultCenter;
+		const center = selectedLocation ?? currentLocation ?? defaultCenter;
 		const map = new maplibregl.Map({
 			container: mapContainerRef.current,
 			style: MAP_STYLE_URL,
@@ -227,6 +232,7 @@ const RequestCreationScreen: React.FC<{
 	}, [
 		isLocationEnabled,
 		selectedLocation,
+		currentLocation,
 		mapLabelLanguage,
 		defaultCenter,
 		resolvePlaceLabel,
@@ -271,17 +277,15 @@ const RequestCreationScreen: React.FC<{
 						lat: position.coords.latitude,
 						lng: position.coords.longitude,
 					};
+					const currentLocationState = {
+						...currentLocation,
+						source: "gps",
+						accuracy: Math.round(position.coords.accuracy),
+						capturedAt: new Date().toISOString(),
+					} satisfies RequestLocation;
 					setDefaultCenter(currentLocation);
-					setSelectedLocation((prev) =>
-						prev
-							? prev
-							: {
-									...currentLocation,
-									source: "gps",
-									accuracy: Math.round(position.coords.accuracy),
-									capturedAt: new Date().toISOString(),
-								},
-					);
+					setCurrentLocation(currentLocationState);
+					setSelectedLocation((prev) => (prev ? prev : currentLocationState));
 					setSelectedPlaceLabel(null);
 				},
 				(geoError) => {
@@ -315,25 +319,27 @@ const RequestCreationScreen: React.FC<{
 		}
 
 		if (!selectedLocation) {
-			markerRef.current?.remove();
-			markerRef.current = null;
+			selectedMarkerRef.current?.remove();
+			selectedMarkerRef.current = null;
 			popupRef.current?.remove();
 			popupRef.current = null;
-			return;
-		}
-
-		if (!markerRef.current) {
-			markerRef.current = new maplibregl.Marker({ color: "#16a34a" })
+		} else if (!selectedMarkerRef.current) {
+			selectedMarkerRef.current = new maplibregl.Marker({ color: "#16a34a" })
 				.setLngLat([selectedLocation.lng, selectedLocation.lat])
 				.addTo(mapRef.current);
 		} else {
-			markerRef.current.setLngLat([selectedLocation.lng, selectedLocation.lat]);
+			selectedMarkerRef.current.setLngLat([
+				selectedLocation.lng,
+				selectedLocation.lat,
+			]);
 		}
 
-		mapRef.current.easeTo({
-			center: [selectedLocation.lng, selectedLocation.lat],
-			zoom: Math.max(mapRef.current.getZoom(), 14),
-		});
+		if (selectedLocation) {
+			mapRef.current.easeTo({
+				center: [selectedLocation.lng, selectedLocation.lat],
+				zoom: Math.max(mapRef.current.getZoom(), 14),
+			});
+		}
 	}, [selectedLocation]);
 
 	useEffect(() => {
@@ -346,10 +352,34 @@ const RequestCreationScreen: React.FC<{
 		});
 	}, [defaultCenter, selectedLocation]);
 
+	useEffect(() => {
+		if (!mapRef.current) {
+			return;
+		}
+
+		if (!currentLocation) {
+			currentMarkerRef.current?.remove();
+			currentMarkerRef.current = null;
+			return;
+		}
+
+		if (!currentMarkerRef.current) {
+			currentMarkerRef.current = new maplibregl.Marker({ color: "#2563eb" })
+				.setLngLat([currentLocation.lng, currentLocation.lat])
+				.addTo(mapRef.current);
+		} else {
+			currentMarkerRef.current.setLngLat([
+				currentLocation.lng,
+				currentLocation.lat,
+			]);
+		}
+	}, [currentLocation]);
+
 	const handleToggleLocation = () => {
 		setIsLocationEnabled((prev) => {
 			if (prev) {
 				setSelectedLocation(null);
+				setCurrentLocation(null);
 				setLocationError(null);
 				setSearchError(null);
 				setSearchResults([]);
