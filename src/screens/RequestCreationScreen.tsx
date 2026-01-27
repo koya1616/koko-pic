@@ -5,19 +5,13 @@ import maplibregl from "maplibre-gl";
 import { useRequestForm } from "../hooks/useRequestForm";
 import type { LatLng, RequestLocation } from "../types/request";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
-import {
-	buildGeocodeUrl,
-	buildReverseGeocodeUrl,
-	type GeocodeResult,
-	parseGeocodeCoordinates,
-	type ReverseGeocodeResult,
-} from "../utils/geocode";
+import { type GeocodeResult, parseGeocodeCoordinates } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
 import {
 	markPermissionGranted,
 	shouldRequestPermissionOnce,
 } from "../utils/permissionOnce";
-import { fetchJson } from "../utils/api";
+import { reverseGeocode, searchGeocode } from "../api/geocoding";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
@@ -99,9 +93,9 @@ const RequestCreationScreen: React.FC = () => {
 		[],
 	);
 
-	const buildGeocodeUrlForQuery = useCallback(
+	const fetchGeocodeResults = useCallback(
 		(query: string) =>
-			buildGeocodeUrl({
+			searchGeocode({
 				query,
 				language: mapLabelLanguage,
 				selectedLocation: selectedLocation ?? currentLocation,
@@ -153,13 +147,11 @@ const RequestCreationScreen: React.FC = () => {
 			reverseLookupIdRef.current = lookupId;
 
 			try {
-				const result = await fetchJson<ReverseGeocodeResult>(
-					buildReverseGeocodeUrl({
-						lat: coordinates.lat,
-						lng: coordinates.lng,
-						language: mapLabelLanguage,
-					}),
-				);
+				const result = await reverseGeocode({
+					lat: coordinates.lat,
+					lng: coordinates.lng,
+					language: mapLabelLanguage,
+				});
 				const label = result.display_name ?? result.name;
 				if (!label) {
 					if (lookupId === reverseLookupIdRef.current) {
@@ -403,9 +395,7 @@ const RequestCreationScreen: React.FC = () => {
 		setSearchError(null);
 		setIsSearching(true);
 		try {
-			const results = await fetchJson<GeocodeResult[]>(
-				buildGeocodeUrlForQuery(query),
-			);
+			const results = await fetchGeocodeResults(query);
 			setSearchResults(results);
 			if (results.length === 0) {
 				setSearchError(t("noResults"));

@@ -4,9 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
 import { validateSignupPassword } from "../utils/signupValidation";
-import { apiRequest } from "../utils/api";
+import { createUser } from "../api/users";
 import { STORAGE_KEYS } from "../constants/storage";
-import type { ApiUser } from "../types/api";
 
 const SignupScreen: React.FC = () => {
 	const navigate = useNavigate();
@@ -17,24 +16,6 @@ const SignupScreen: React.FC = () => {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-
-	const signup = async (
-		email: string,
-		displayName: string,
-		password: string,
-	) => {
-		setIsLoading(true);
-		try {
-			await apiRequest<ApiUser>("/api/v1/users", {
-				method: "POST",
-				body: { email, display_name: displayName, password },
-			});
-			localStorage.setItem(STORAGE_KEYS.pendingVerificationEmail, email);
-		} catch (error) {
-			setIsLoading(false);
-			throw error;
-		}
-	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -50,7 +31,8 @@ const SignupScreen: React.FC = () => {
 
 		setIsLoading(true);
 		try {
-			await signup(email, displayName, password);
+			await createUser(email, displayName, password);
+			localStorage.setItem(STORAGE_KEYS.pendingVerificationEmail, email);
 			navigate({ to: "/email-verification-required" });
 		} catch (error) {
 			const errorMessage =

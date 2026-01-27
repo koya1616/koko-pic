@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
-import type { LoginResponse } from "../types/api";
-import { apiRequest } from "../utils/api";
+import { login as loginUser } from "../api/auth";
 import { STORAGE_KEYS } from "../constants/storage";
 
 const SigninScreen: React.FC = () => {
@@ -15,22 +14,15 @@ const SigninScreen: React.FC = () => {
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 
-	const login = async (email: string, password: string) => {
-		const data = await apiRequest<LoginResponse>("/api/v1/login", {
-			method: "POST",
-			body: { email, password },
-		});
-		const { token } = data;
-
-		localStorage.setItem(STORAGE_KEYS.authToken, token);
-	};
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		setIsLoading(true);
 		try {
-			await login(email, password);
+			const data = await loginUser(email, password);
+			const { token } = data;
+
+			localStorage.setItem(STORAGE_KEYS.authToken, token);
 			navigate({ to: "/" });
 		} catch (error) {
 			const errorMessage =

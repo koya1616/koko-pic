@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
-import { apiRequest } from "../utils/api";
+import { resendVerificationEmail } from "../api/emailVerification";
 import { STORAGE_KEYS } from "../constants/storage";
 
 const EmailVerificationRequiredScreen: React.FC = () => {
@@ -27,10 +27,7 @@ const EmailVerificationRequiredScreen: React.FC = () => {
 
 		setIsSending(true);
 		try {
-			await apiRequest<void>("/api/v1/resend-verification", {
-				method: "POST",
-				body: { email: userEmail },
-			});
+			await resendVerificationEmail(userEmail);
 			showSnackbar(t("verificationSent"), "success");
 		} catch (error) {
 			const errorMessage =

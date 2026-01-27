@@ -5,7 +5,7 @@ import { useTranslation } from "../context/LanguageContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { useSnackbar } from "../context/SnackbarContext";
 import { STORAGE_KEYS } from "../constants/storage";
-import { apiRequest } from "../utils/api";
+import { fetchCurrentUser } from "../api/users";
 import type { ApiUser } from "../types/api";
 
 const AccountScreen: React.FC = () => {
@@ -25,9 +25,7 @@ const AccountScreen: React.FC = () => {
 			try {
 				const token = localStorage.getItem(STORAGE_KEYS.authToken) || "";
 
-				const userData = await apiRequest<ApiUser>("/api/v1/users/me", {
-					token,
-				});
+				const userData = await fetchCurrentUser(token);
 
 				setUser({
 					id: userData.id,

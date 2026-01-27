@@ -1,17 +1,10 @@
 import type React from "react";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
-import { apiRequest } from "../utils/api";
+import { verifyEmail } from "../api/auth";
 import { STORAGE_KEYS } from "../constants/storage";
-
-interface VerifyEmailResponse {
-	token: string;
-	user_id: string;
-	email: string;
-	display_name: string;
-}
 
 const EmailVerificationScreen: React.FC = () => {
 	const navigate = useNavigate();
@@ -24,23 +17,16 @@ const EmailVerificationScreen: React.FC = () => {
 	>("verifying");
 	const hasVerified = useRef(false);
 
-	const verifyEmail = useCallback(async (token: string) => {
-		const data = await apiRequest<VerifyEmailResponse>(
-			`/api/v1/verify-email/${token}`,
-		);
-
-		const { token: authToken } = data;
-
-		localStorage.setItem(STORAGE_KEYS.authToken, authToken);
-	}, []);
-
 	useEffect(() => {
 		if (hasVerified.current) return;
 		hasVerified.current = true;
 
 		const verifyToken = async () => {
 			try {
-				await verifyEmail(token);
+				const data = await verifyEmail(token);
+				const { token: authToken } = data;
+
+				localStorage.setItem(STORAGE_KEYS.authToken, authToken);
 				setVerificationStatus("success");
 			} catch (error) {
 				setVerificationStatus("error");
@@ -53,7 +39,7 @@ const EmailVerificationScreen: React.FC = () => {
 		};
 
 		verifyToken();
-	}, [token, showSnackbar, t, verifyEmail]);
+	}, [token, showSnackbar, t]);
 
 	return (
 		<div className="flex h-full flex-col bg-gray-50 p-4">
