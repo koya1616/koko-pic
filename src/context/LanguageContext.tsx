@@ -9,6 +9,7 @@ import {
 
 import jaTranslations from "../locales/ja.json";
 import enTranslations from "../locales/en.json";
+import { STORAGE_KEYS } from "../constants/storage";
 
 const LANGUAGES = {
 	JA: "JA",
@@ -39,7 +40,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
 	const [language, setLanguage] = useState<LanguageCode>(() => {
 		const savedLanguage = localStorage.getItem(
-			"language",
+			STORAGE_KEYS.language,
 		) as LanguageCode | null;
 		const browserLanguage = navigator.language.startsWith("ja")
 			? LANGUAGES.JA
@@ -49,7 +50,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
 	});
 
 	useEffect(() => {
-		localStorage.setItem("language", language);
+		localStorage.setItem(STORAGE_KEYS.language, language);
 	}, [language]);
 
 	const t = (

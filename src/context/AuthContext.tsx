@@ -9,6 +9,7 @@ import {
 import type { ReactNode } from "react";
 import type { ApiUser, LoginResponse, VerifyEmailResponse } from "../types/api";
 import { apiRequest } from "../utils/api";
+import { STORAGE_KEYS } from "../constants/storage";
 
 type User = Pick<ApiUser, "id" | "email" | "display_name">;
 
@@ -49,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			});
 		} catch (error) {
 			console.error("Error fetching user info:", error);
-			localStorage.removeItem("authToken");
+			localStorage.removeItem(STORAGE_KEYS.authToken);
 			setToken(null);
 			setUser(null);
 		} finally {
@@ -58,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		const storedToken = localStorage.getItem("authToken");
+		const storedToken = localStorage.getItem(STORAGE_KEYS.authToken);
 		if (storedToken) {
 			setToken(storedToken);
 			fetchUserInfo(storedToken);
@@ -76,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			});
 			const { token, user_id, email: userEmail, display_name } = data;
 
-			localStorage.setItem("authToken", token);
+			localStorage.setItem(STORAGE_KEYS.authToken, token);
 
 			setToken(token);
 			setUser({
@@ -101,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				method: "POST",
 				body: { email, display_name: displayName, password },
 			});
-			localStorage.setItem("pendingVerificationEmail", email);
+			localStorage.setItem(STORAGE_KEYS.pendingVerificationEmail, email);
 		} catch (error) {
 			setIsLoading(false);
 			throw error;
@@ -115,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 		const { token: authToken, user_id, email, display_name } = data;
 
-		localStorage.setItem("authToken", authToken);
+		localStorage.setItem(STORAGE_KEYS.authToken, authToken);
 		setToken(authToken);
 
 		setUser({
@@ -126,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	};
 
 	const logout = () => {
-		localStorage.removeItem("authToken");
+		localStorage.removeItem(STORAGE_KEYS.authToken);
 		setToken(null);
 		setUser(null);
 	};

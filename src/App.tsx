@@ -12,6 +12,7 @@ import EmailVerificationRequiredScreen from "./screens/EmailVerificationRequired
 import Snackbar from "./components/Snackbar";
 import type { Request } from "./types/request";
 import type { Screen } from "./types/screen";
+import { SESSION_STORAGE_KEYS } from "./constants/storage";
 
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<Screen>("home");
@@ -26,9 +27,11 @@ function App() {
 	);
 
 	useEffect(() => {
-		const token = sessionStorage.getItem("verificationToken");
+		const token = sessionStorage.getItem(
+			SESSION_STORAGE_KEYS.verificationToken,
+		);
 		if (token) {
-			sessionStorage.removeItem("verificationToken");
+			sessionStorage.removeItem(SESSION_STORAGE_KEYS.verificationToken);
 			setVerificationToken(token);
 			setCurrentScreen("email-verification");
 		}

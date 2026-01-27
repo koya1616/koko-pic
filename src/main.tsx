@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import AppWithProviders from "./App";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./App.css";
+import { SESSION_STORAGE_KEYS } from "./constants/storage";
 
 const checkForVerificationToken = () => {
 	const path = window.location.pathname;
@@ -21,7 +22,10 @@ const checkForVerificationToken = () => {
 const verificationToken = checkForVerificationToken();
 
 if (verificationToken) {
-	sessionStorage.setItem("verificationToken", verificationToken);
+	sessionStorage.setItem(
+		SESSION_STORAGE_KEYS.verificationToken,
+		verificationToken,
+	);
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

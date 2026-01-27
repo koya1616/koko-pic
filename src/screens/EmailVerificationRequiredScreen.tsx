@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import type { Screen } from "../types/screen";
 import { apiRequest } from "../utils/api";
+import { STORAGE_KEYS } from "../constants/storage";
 
 const EmailVerificationRequiredScreen: React.FC<{
 	navigateTo: (screen: Screen) => void;
@@ -14,7 +15,8 @@ const EmailVerificationRequiredScreen: React.FC<{
 
 	const [isSending, setIsSending] = useState(false);
 
-	const storedEmail = localStorage.getItem("pendingVerificationEmail") || "";
+	const storedEmail =
+		localStorage.getItem(STORAGE_KEYS.pendingVerificationEmail) || "";
 	const userEmail = user?.email || storedEmail;
 	const verificationMessage = userEmail
 		? t("verificationRequiredMessage", { email: userEmail })

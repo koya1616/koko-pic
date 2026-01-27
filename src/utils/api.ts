@@ -1,4 +1,5 @@
 import type { ApiError } from "../types/api";
+import { STORAGE_KEYS } from "../constants/storage";
 
 const DEFAULT_API_BASE_URL = "http://0.0.0.0:8000";
 
@@ -46,7 +47,7 @@ export const apiRequest = async <T>(
 	});
 
 	if (response.status === 401) {
-		localStorage.removeItem("authToken");
+		localStorage.removeItem(STORAGE_KEYS.authToken);
 		throw new Error("Unauthorized: Please log in again.");
 	}
 
