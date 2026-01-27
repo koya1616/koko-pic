@@ -15,6 +15,7 @@ export interface Request {
 	id: number;
 	location?: RequestLocation;
 	status: RequestStatus;
+	placeName?: string;
 	description: string;
 	distance?: number;
 }

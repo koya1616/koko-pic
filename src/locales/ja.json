@@ -28,6 +28,8 @@
 	"createRequestButton": "依頼を作成",
 	"noRequestDescription": "依頼内容がありません",
 	"selectPlace": "選択した場所: {placeName}",
+	"resolvingPlace": "場所を取得中...",
+	"placeNameUnavailable": "場所を取得できませんでした",
 	"locationPermissionDenied": "位置情報のアクセスが拒否されました。",
 	"locationTimeout": "位置情報の取得がタイムアウトしました。",
 	"locationUnavailableError": "位置情報を取得できません。",

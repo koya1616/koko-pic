@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	buildGeocodeUrl,
+	buildReverseGeocodeUrl,
 	formatLocationSummary,
 	parseGeocodeCoordinates,
 } from "./geocode";
@@ -69,6 +70,19 @@ describe("parseGeocodeCoordinates", () => {
 		});
 
 		expect(result).toEqual({ lat: 35.123, lng: 139.456 });
+	});
+});
+
+describe("buildReverseGeocodeUrl", () => {
+	it("緯度経度と言語を使って逆ジオコードURLを組み立てる", () => {
+		const params = parseSearchParams(
+			buildReverseGeocodeUrl({ lat: 35.0, lng: 139.0, language: "ja" }),
+		);
+
+		expect(params.get("format")).toBe("jsonv2");
+		expect(params.get("lat")).toBe("35");
+		expect(params.get("lon")).toBe("139");
+		expect(params.get("accept-language")).toBe("ja");
 	});
 });
 

@@ -6,8 +6,10 @@ import type { LatLng, RequestLocation } from "../types/request";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
 import {
 	buildGeocodeUrl,
+	buildReverseGeocodeUrl,
 	type GeocodeResult,
 	parseGeocodeCoordinates,
+	type ReverseGeocodeResult,
 } from "../utils/geocode";
 import { geoErrorToMessage } from "../utils/geolocation";
 import {
@@ -81,6 +83,8 @@ const RequestCreationScreen: React.FC<{
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const markerRef = useRef<maplibregl.Marker | null>(null);
+	const popupRef = useRef<maplibregl.Popup | null>(null);
+	const reverseLookupIdRef = useRef(0);
 	const mapLabelLanguage = useMemo(
 		() =>
 			resolveMapLabelLanguage(
@@ -115,9 +119,59 @@ const RequestCreationScreen: React.FC<{
 				mapRef.current.remove();
 				mapRef.current = null;
 				markerRef.current = null;
+				popupRef.current = null;
 			}
 		};
 	}, []);
+
+	const showPopup = useCallback((label: string, coordinates: LatLng) => {
+		if (!mapRef.current) {
+			return;
+		}
+
+		popupRef.current?.remove();
+		popupRef.current = new maplibregl.Popup({
+			offset: 16,
+			closeButton: false,
+			closeOnClick: true,
+		})
+			.setLngLat([coordinates.lng, coordinates.lat])
+			.setText(label)
+			.addTo(mapRef.current);
+	}, []);
+
+	const resolvePlaceLabel = useCallback(
+		async (coordinates: LatLng) => {
+			const lookupId = reverseLookupIdRef.current + 1;
+			reverseLookupIdRef.current = lookupId;
+
+			try {
+				const result = await fetchJson<ReverseGeocodeResult>(
+					buildReverseGeocodeUrl({
+						lat: coordinates.lat,
+						lng: coordinates.lng,
+						language: mapLabelLanguage,
+					}),
+				);
+				const label = result.display_name ?? result.name;
+				if (!label) {
+					if (lookupId === reverseLookupIdRef.current) {
+						showPopup(t("placeNameUnavailable"), coordinates);
+					}
+					return;
+				}
+				if (lookupId === reverseLookupIdRef.current) {
+					setSelectedPlaceLabel(label);
+					showPopup(label, coordinates);
+				}
+			} catch {
+				if (lookupId === reverseLookupIdRef.current) {
+					showPopup(t("placeNameUnavailable"), coordinates);
+				}
+			}
+		},
+		[mapLabelLanguage, showPopup, t],
+	);
 
 	useEffect(() => {
 		if (!isLocationEnabled) {
@@ -125,6 +179,7 @@ const RequestCreationScreen: React.FC<{
 				mapRef.current.remove();
 				mapRef.current = null;
 				markerRef.current = null;
+				popupRef.current = null;
 			}
 			return;
 		}
@@ -154,17 +209,30 @@ const RequestCreationScreen: React.FC<{
 		});
 
 		map.on("click", (event) => {
-			setSelectedPlaceLabel(null);
-			setSelectedLocation({
+			const coordinates = {
 				lat: event.lngLat.lat,
 				lng: event.lngLat.lng,
+			};
+			setSelectedPlaceLabel(null);
+			setSelectedLocation({
+				...coordinates,
 				source: "map",
 				capturedAt: new Date().toISOString(),
 			});
+			showPopup(t("resolvingPlace"), coordinates);
+			void resolvePlaceLabel(coordinates);
 		});
 
 		mapRef.current = map;
-	}, [isLocationEnabled, selectedLocation, mapLabelLanguage, defaultCenter]);
+	}, [
+		isLocationEnabled,
+		selectedLocation,
+		mapLabelLanguage,
+		defaultCenter,
+		resolvePlaceLabel,
+		showPopup,
+		t,
+	]);
 
 	useEffect(() => {
 		if (!isLocationEnabled) {
@@ -249,6 +317,8 @@ const RequestCreationScreen: React.FC<{
 		if (!selectedLocation) {
 			markerRef.current?.remove();
 			markerRef.current = null;
+			popupRef.current?.remove();
+			popupRef.current = null;
 			return;
 		}
 
@@ -322,12 +392,14 @@ const RequestCreationScreen: React.FC<{
 			return;
 		}
 
+		reverseLookupIdRef.current += 1;
 		setSelectedLocation({
 			...coordinates,
 			source: "search",
 			capturedAt: new Date().toISOString(),
 		});
 		setSelectedPlaceLabel(result.display_name);
+		showPopup(result.display_name, coordinates);
 		setSearchResults([]);
 		setSearchError(null);
 	};

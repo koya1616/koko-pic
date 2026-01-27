@@ -28,6 +28,8 @@
 	"createRequestButton": "Create Request",
 	"noRequestDescription": "No request description",
 	"selectPlace": "Selected place: {placeName}",
+	"resolvingPlace": "Resolving place name...",
+	"placeNameUnavailable": "Place name unavailable",
 	"locationPermissionDenied": "Location access denied.",
 	"locationTimeout": "Location retrieval timed out.",
 	"locationUnavailableError": "Unable to retrieve location.",
