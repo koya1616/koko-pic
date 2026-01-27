@@ -1,21 +1,40 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
 import { validateSignupPassword } from "../utils/signupValidation";
+import { apiRequest } from "../utils/api";
+import { STORAGE_KEYS } from "../constants/storage";
+import type { ApiUser } from "../types/api";
 
 const SignupScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { showSnackbar } = useSnackbar();
-	const { signup } = useAuth();
 	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
 	const [displayName, setDisplayName] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+
+	const signup = async (
+		email: string,
+		displayName: string,
+		password: string,
+	) => {
+		setIsLoading(true);
+		try {
+			await apiRequest<ApiUser>("/api/v1/users", {
+				method: "POST",
+				body: { email, display_name: displayName, password },
+			});
+			localStorage.setItem(STORAGE_KEYS.pendingVerificationEmail, email);
+		} catch (error) {
+			setIsLoading(false);
+			throw error;
+		}
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

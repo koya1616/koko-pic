@@ -1,7 +1,6 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import { useSnackbar } from "../context/SnackbarContext";
 import { apiRequest } from "../utils/api";
@@ -10,14 +9,12 @@ import { STORAGE_KEYS } from "../constants/storage";
 const EmailVerificationRequiredScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { showSnackbar } = useSnackbar();
-	const { user } = useAuth();
 	const { t } = useTranslation();
 
 	const [isSending, setIsSending] = useState(false);
 
-	const storedEmail =
+	const userEmail =
 		localStorage.getItem(STORAGE_KEYS.pendingVerificationEmail) || "";
-	const userEmail = user?.email || storedEmail;
 	const verificationMessage = userEmail
 		? t("verificationRequiredMessage", { email: userEmail })
 		: t("pleaseVerifyEmail");

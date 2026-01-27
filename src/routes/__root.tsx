@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { AuthProvider } from "../context/AuthContext";
 import { LanguageProvider } from "../context/LanguageContext";
 import { SnackbarProvider, useSnackbar } from "../context/SnackbarContext";
 import Snackbar from "../components/Snackbar";
@@ -22,13 +21,11 @@ function RootLayout() {
 
 function RootComponent() {
 	return (
-		<AuthProvider>
-			<LanguageProvider>
-				<SnackbarProvider>
-					<RootLayout />
-				</SnackbarProvider>
-			</LanguageProvider>
-		</AuthProvider>
+		<LanguageProvider>
+			<SnackbarProvider>
+				<RootLayout />
+			</SnackbarProvider>
+		</LanguageProvider>
 	);
 }
 
