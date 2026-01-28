@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
 import { useRequestForm } from "./hooks/useRequestForm";
-import type { LatLng, RequestLocation } from "../../shared/types/request";
+import type { LatLng } from "../../shared/types/request";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../../shared/constants/map";
 import { type GeocodeResult, parseGeocodeCoordinates } from "./utils/geocode";
 import { geoErrorToMessage } from "./utils/geolocation";
@@ -66,10 +66,8 @@ const RequestCreationScreen: React.FC = () => {
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
 	const [isLocationEnabled, setIsLocationEnabled] = useState(false);
-	const [selectedLocation, setSelectedLocation] =
-		useState<RequestLocation | null>(null);
-	const [currentLocation, setCurrentLocation] =
-		useState<RequestLocation | null>(null);
+	const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
+	const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null);
 	const [locationError, setLocationError] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
@@ -270,13 +268,11 @@ const RequestCreationScreen: React.FC = () => {
 						lat: position.coords.latitude,
 						lng: position.coords.longitude,
 					};
-					const currentLocationState = {
-						...currentLocation,
-						accuracy: Math.round(position.coords.accuracy),
-					} satisfies RequestLocation;
 					setDefaultCenter(currentLocation);
-					setCurrentLocation(currentLocationState);
-					setSelectedLocation((prev) => (prev ? prev : currentLocationState));
+					setCurrentLocation(currentLocation);
+					setSelectedLocation((prev: LatLng | null) =>
+						prev ? prev : currentLocation,
+					);
 					setSelectedPlaceLabel(null);
 				},
 				(geoError) => {

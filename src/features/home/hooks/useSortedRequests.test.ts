@@ -9,10 +9,8 @@ const createRequest = (
 	description = "test",
 ): Request => ({
 	id,
-	location: {
-		lat,
-		lng,
-	},
+	lat,
+	lng,
 	status: "open",
 	description,
 });
@@ -39,7 +37,13 @@ describe("sortRequestsByDistance", () => {
 		const userLocation = { lat: 0, lng: 0 };
 		const requests: Request[] = [
 			createRequest(1, 0, 0.02),
-			{ id: 2, status: "open", description: "no location" },
+			{
+				id: 2,
+				lat: NaN,
+				lng: NaN,
+				status: "open",
+				description: "no location",
+			},
 			createRequest(3, 0, 0.01),
 		];
 

@@ -3,15 +3,12 @@ export type LatLng = {
 	lng: number;
 };
 
-export type RequestLocation = LatLng & {
-	accuracy?: number;
-};
-
 export type RequestStatus = "open" | "in-progress" | "completed";
 
 export interface Request {
 	id: number;
-	location?: RequestLocation;
+	lat: number;
+	lng: number;
 	status: RequestStatus;
 	placeName?: string;
 	description: string;

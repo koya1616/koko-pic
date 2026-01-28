@@ -12,13 +12,20 @@ export const sortRequestsByDistance = (
 
 	return requests
 		.map((request) => {
-			if (!request.location) {
+			if (
+				typeof request.lat !== "number" ||
+				typeof request.lng !== "number" ||
+				Number.isNaN(request.lat) ||
+				Number.isNaN(request.lng)
+			) {
 				return request;
 			}
 
 			return {
 				...request,
-				distance: Math.round(haversineMeters(userLocation, request.location)),
+				distance: Math.round(
+					haversineMeters(userLocation, { lat: request.lat, lng: request.lng }),
+				),
 			};
 		})
 		.sort((a, b) => {

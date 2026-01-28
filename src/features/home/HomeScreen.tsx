@@ -2,11 +2,7 @@ import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
-import type {
-	Request,
-	RequestLocation,
-	RequestStatus,
-} from "../../shared/types/request";
+import type { Request, RequestStatus } from "../../shared/types/request";
 import RequestCard from "./components/RequestCard";
 import { mockRequests } from "../../shared/data/mockRequests";
 import { useGeolocation } from "./hooks/useGeolocation";
@@ -21,10 +17,8 @@ const STATUS_COLORS: Record<RequestStatus, string> = {
 	completed: "#22c55e",
 };
 
-const hasLocation = (
-	request: Request,
-): request is Request & { location: RequestLocation } =>
-	Boolean(request.location);
+const hasLocation = (request: Request): boolean =>
+	typeof request.lat === "number" && typeof request.lng === "number";
 
 const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
@@ -99,7 +93,7 @@ const HomeScreen: React.FC = () => {
 				const marker = new maplibregl.Marker({
 					color: STATUS_COLORS[request.status] ?? STATUS_COLORS.open,
 				})
-					.setLngLat([request.location.lng, request.location.lat])
+					.setLngLat([request.lng, request.lat])
 					.addTo(map);
 				marker.getElement().addEventListener("click", () => {
 					setSelectedRequestId(request.id);
@@ -130,7 +124,7 @@ const HomeScreen: React.FC = () => {
 			const bounds = new maplibregl.LngLatBounds();
 			let hasBounds = false;
 			for (const request of requestsWithLocation) {
-				bounds.extend([request.location.lng, request.location.lat]);
+				bounds.extend([request.lng, request.lat]);
 				hasBounds = true;
 			}
 
