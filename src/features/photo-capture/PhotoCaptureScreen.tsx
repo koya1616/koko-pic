@@ -1,10 +1,10 @@
 import type React from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useCamera } from "../hooks/useCamera";
-import { useTranslation } from "../shared/context/LanguageContext";
-import { useSnackbar } from "../shared/context/SnackbarContext";
-import { mockRequests } from "../shared/data/mockRequests";
-import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { useCamera } from "./hooks/useCamera";
+import { useTranslation } from "../../shared/context/LanguageContext";
+import { useSnackbar } from "../../shared/context/SnackbarContext";
+import { mockRequests } from "../../shared/data/mockRequests";
+import { useAuthRedirect } from "../auth/hooks/useAuthRedirect";
 
 const PhotoCaptureScreen: React.FC = () => {
 	useAuthRedirect();

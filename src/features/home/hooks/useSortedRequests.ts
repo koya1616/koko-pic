@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { haversineMeters } from "../shared/utils/distance";
-import type { LatLng, Request } from "../shared/types/request";
+import { haversineMeters } from "../../../shared/utils/distance";
+import type { LatLng, Request } from "../../../shared/types/request";
 
 export const sortRequestsByDistance = (
 	requests: Request[],

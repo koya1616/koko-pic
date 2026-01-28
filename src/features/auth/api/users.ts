@@ -1,5 +1,5 @@
-import type { ApiUser } from "../shared/types/api";
-import { apiRequest } from "../shared/api/client";
+import type { ApiUser } from "../../../shared/types/api";
+import { apiRequest } from "../../../shared/api/client";
 
 export const createUser = async (
 	email: string,

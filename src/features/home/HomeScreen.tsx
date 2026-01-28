@@ -6,14 +6,14 @@ import type {
 	Request,
 	RequestLocation,
 	RequestStatus,
-} from "../shared/types/request";
-import RequestCard from "../components/RequestCard";
-import { mockRequests } from "../shared/data/mockRequests";
-import { useGeolocation } from "../hooks/useGeolocation";
-import { useSortedRequests } from "../hooks/useSortedRequests";
-import { FALLBACK_CENTER, MAP_STYLE_URL } from "../shared/constants/map";
-import { useTranslation } from "../shared/context/LanguageContext";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+} from "../../shared/types/request";
+import RequestCard from "./components/RequestCard";
+import { mockRequests } from "../../shared/data/mockRequests";
+import { useGeolocation } from "./hooks/useGeolocation";
+import { useSortedRequests } from "./hooks/useSortedRequests";
+import { FALLBACK_CENTER, MAP_STYLE_URL } from "../../shared/constants/map";
+import { useTranslation } from "../../shared/context/LanguageContext";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",

@@ -1,10 +1,10 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useTranslation } from "../shared/context/LanguageContext";
-import { useSnackbar } from "../shared/context/SnackbarContext";
+import { useTranslation } from "../../../shared/context/LanguageContext";
+import { useSnackbar } from "../../../shared/context/SnackbarContext";
 import { login as loginUser } from "../api/auth";
-import { STORAGE_KEYS } from "../shared/constants/storage";
+import { STORAGE_KEYS } from "../../../shared/constants/storage";
 
 const SigninScreen: React.FC = () => {
 	const navigate = useNavigate();

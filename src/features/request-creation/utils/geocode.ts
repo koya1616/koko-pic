@@ -1,9 +1,9 @@
-import type { LatLng } from "../shared/types/request";
+import type { LatLng } from "../../../shared/types/request";
 import {
 	GEOCODE_ENDPOINT,
 	REVERSE_GEOCODE_ENDPOINT,
 	SEARCH_RADIUS_KM,
-} from "../shared/constants/geocode";
+} from "../../../shared/constants/geocode";
 
 export const buildGeocodeUrl = ({
 	query,

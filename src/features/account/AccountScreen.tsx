@@ -1,12 +1,12 @@
 import type React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useTranslation } from "../shared/context/LanguageContext";
-import { useAuthRedirect } from "../hooks/useAuthRedirect";
-import { useSnackbar } from "../shared/context/SnackbarContext";
-import { STORAGE_KEYS } from "../shared/constants/storage";
-import { fetchCurrentUser } from "../api/users";
-import type { ApiUser } from "../shared/types/api";
+import { useTranslation } from "../../shared/context/LanguageContext";
+import { useAuthRedirect } from "../auth/hooks/useAuthRedirect";
+import { useSnackbar } from "../../shared/context/SnackbarContext";
+import { STORAGE_KEYS } from "../../shared/constants/storage";
+import { fetchCurrentUser } from "../auth/api/users";
+import type { ApiUser } from "../../shared/types/api";
 
 const AccountScreen: React.FC = () => {
 	useAuthRedirect();

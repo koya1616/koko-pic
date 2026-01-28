@@ -1,6 +1,12 @@
 import type { LatLng } from "../types/request";
-import type { GeocodeResult, ReverseGeocodeResult } from "../../utils/geocode";
-import { buildGeocodeUrl, buildReverseGeocodeUrl } from "../../utils/geocode";
+import type {
+	GeocodeResult,
+	ReverseGeocodeResult,
+} from "../../features/request-creation/utils/geocode";
+import {
+	buildGeocodeUrl,
+	buildReverseGeocodeUrl,
+} from "../../features/request-creation/utils/geocode";
 import { fetchJson } from "./client";
 
 export const searchGeocode = async (params: {

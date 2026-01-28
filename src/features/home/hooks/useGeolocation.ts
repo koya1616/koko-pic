@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "../shared/context/LanguageContext";
-import type { LatLng } from "../shared/types/request";
+import { useTranslation } from "../../../shared/context/LanguageContext";
+import type { LatLng } from "../../../shared/types/request";
 import {
 	markPermissionGranted,
 	shouldRequestPermissionOnce,
-} from "../shared/utils/permissionOnce";
+} from "../../../shared/utils/permissionOnce";
 
 export const useGeolocation = () => {
 	const { t } = useTranslation();
