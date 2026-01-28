@@ -1,14 +1,10 @@
-import type { ApiUser } from "../../../shared/types/api";
+import type { ApiUser, CreateUserRequest } from "../../../shared/types/api";
 import { apiRequest } from "../../../shared/api/client";
 
-export const createUser = async (
-	email: string,
-	displayName: string,
-	password: string,
-) =>
+export const createUser = async (request: CreateUserRequest) =>
 	apiRequest<ApiUser>("/api/v1/users", {
 		method: "POST",
-		body: { email, display_name: displayName, password },
+		body: request,
 	});
 
 export const fetchCurrentUser = async (token: string) =>

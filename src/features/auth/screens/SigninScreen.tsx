@@ -19,7 +19,7 @@ const SigninScreen: React.FC = () => {
 
 		setIsLoading(true);
 		try {
-			const data = await loginUser(email, password);
+			const data = await loginUser({ email, password });
 			const { token } = data;
 
 			localStorage.setItem(STORAGE_KEYS.authToken, token);

@@ -34,3 +34,18 @@ export interface VerifyEmailResponse {
 	email: string;
 	display_name: string;
 }
+
+export interface ResendVerificationRequest {
+	email: string;
+}
+
+export interface Picture {
+	id: number;
+	user_id: number;
+	image_url: string;
+	created_at: string;
+}
+
+export interface PicturesResponse {
+	pictures: Picture[];
+}

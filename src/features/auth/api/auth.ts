@@ -1,17 +1,14 @@
-import type { LoginResponse } from "../../../shared/types/api";
+import type {
+	LoginRequest,
+	LoginResponse,
+	VerifyEmailResponse,
+} from "../../../shared/types/api";
 import { apiRequest } from "../../../shared/api/client";
 
-type VerifyEmailResponse = {
-	token: string;
-	user_id: string;
-	email: string;
-	display_name: string;
-};
-
-export const login = async (email: string, password: string) =>
+export const login = async (request: LoginRequest) =>
 	apiRequest<LoginResponse>("/api/v1/login", {
 		method: "POST",
-		body: { email, password },
+		body: request,
 	});
 
 export const verifyEmail = async (token: string) =>

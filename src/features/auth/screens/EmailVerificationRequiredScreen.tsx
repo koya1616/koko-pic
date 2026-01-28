@@ -27,7 +27,7 @@ const EmailVerificationRequiredScreen: React.FC = () => {
 
 		setIsSending(true);
 		try {
-			await resendVerificationEmail(userEmail);
+			await resendVerificationEmail({ email: userEmail });
 			showSnackbar(t("verificationSent"), "success");
 		} catch (error) {
 			const errorMessage =

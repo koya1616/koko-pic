@@ -31,7 +31,11 @@ const SignupScreen: React.FC = () => {
 
 		setIsLoading(true);
 		try {
-			await createUser(email, displayName, password);
+			await createUser({
+				email,
+				display_name: displayName,
+				password,
+			});
 			localStorage.setItem(STORAGE_KEYS.pendingVerificationEmail, email);
 			navigate({ to: "/email-verification-required" });
 		} catch (error) {
