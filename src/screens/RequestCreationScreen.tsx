@@ -12,8 +12,8 @@ import {
 	shouldRequestPermissionOnce,
 } from "../utils/permissionOnce";
 import { reverseGeocode, searchGeocode } from "../api/geocoding";
-import { useTranslation } from "../context/LanguageContext";
-import { useSnackbar } from "../context/SnackbarContext";
+import { useTranslation } from "../shared/context/LanguageContext";
+import { useSnackbar } from "../shared/context/SnackbarContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 type MapLabelLanguage = "ja" | "en";

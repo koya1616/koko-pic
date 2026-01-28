@@ -8,7 +8,7 @@ import { mockRequests } from "../data/mockRequests";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useSortedRequests } from "../hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../constants/map";
-import { useTranslation } from "../context/LanguageContext";
+import { useTranslation } from "../shared/context/LanguageContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {

@@ -1,8 +1,8 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useTranslation } from "../context/LanguageContext";
-import { useSnackbar } from "../context/SnackbarContext";
+import { useTranslation } from "../shared/context/LanguageContext";
+import { useSnackbar } from "../shared/context/SnackbarContext";
 import { login as loginUser } from "../api/auth";
 import { STORAGE_KEYS } from "../constants/storage";
 

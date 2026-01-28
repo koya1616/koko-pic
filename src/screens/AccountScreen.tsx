@@ -1,9 +1,9 @@
 import type React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useTranslation } from "../context/LanguageContext";
+import { useTranslation } from "../shared/context/LanguageContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
-import { useSnackbar } from "../context/SnackbarContext";
+import { useSnackbar } from "../shared/context/SnackbarContext";
 import { STORAGE_KEYS } from "../constants/storage";
 import { fetchCurrentUser } from "../api/users";
 import type { ApiUser } from "../types/api";

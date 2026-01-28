@@ -7,9 +7,9 @@ import {
 	useEffect,
 } from "react";
 
-import jaTranslations from "../locales/ja.json";
-import enTranslations from "../locales/en.json";
-import { STORAGE_KEYS } from "../constants/storage";
+import jaTranslations from "../../locales/ja.json";
+import enTranslations from "../../locales/en.json";
+import { STORAGE_KEYS } from "../../constants/storage";
 
 const LANGUAGES = {
 	JA: "JA",

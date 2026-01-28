@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { LanguageProvider } from "../context/LanguageContext";
-import { SnackbarProvider, useSnackbar } from "../context/SnackbarContext";
+import { LanguageProvider } from "../shared/context/LanguageContext";
+import { SnackbarProvider, useSnackbar } from "../shared/context/SnackbarContext";
 import Snackbar from "../components/Snackbar";
 
 function RootLayout() {

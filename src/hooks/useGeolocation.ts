@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "../context/LanguageContext";
+import { useTranslation } from "../shared/context/LanguageContext";
 import type { LatLng } from "../types/request";
 import {
 	markPermissionGranted,
