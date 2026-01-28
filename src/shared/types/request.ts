@@ -6,7 +6,6 @@ export type LatLng = {
 export type RequestLocation = LatLng & {
 	source: "map" | "gps" | "search";
 	accuracy?: number;
-	capturedAt: string;
 };
 
 export type RequestStatus = "open" | "in-progress" | "completed";

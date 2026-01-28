@@ -217,7 +217,6 @@ const RequestCreationScreen: React.FC = () => {
 			setSelectedLocation({
 				...coordinates,
 				source: "map",
-				capturedAt: new Date().toISOString(),
 			});
 			showPopup(t("resolvingPlace"), coordinates);
 			void resolvePlaceLabel(coordinates);
@@ -276,7 +275,6 @@ const RequestCreationScreen: React.FC = () => {
 						...currentLocation,
 						source: "gps",
 						accuracy: Math.round(position.coords.accuracy),
-						capturedAt: new Date().toISOString(),
 					} satisfies RequestLocation;
 					setDefaultCenter(currentLocation);
 					setCurrentLocation(currentLocationState);
@@ -418,8 +416,7 @@ const RequestCreationScreen: React.FC = () => {
 		reverseLookupIdRef.current += 1;
 		setSelectedLocation({
 			...coordinates,
-			source: "search",
-			capturedAt: new Date().toISOString(),
+			source: "search" as const,
 		});
 		setSelectedPlaceLabel(result.display_name);
 		showPopup(result.display_name, coordinates);
