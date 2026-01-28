@@ -1,5 +1,5 @@
-import type { LoginResponse } from "../types/api";
-import { apiRequest } from "../utils/api";
+import type { LoginResponse } from "../shared/types/api";
+import { apiRequest } from "../shared/api/client";
 
 type VerifyEmailResponse = {
 	token: string;

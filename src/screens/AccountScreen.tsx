@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "../shared/context/LanguageContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { useSnackbar } from "../shared/context/SnackbarContext";
-import { STORAGE_KEYS } from "../constants/storage";
+import { STORAGE_KEYS } from "../shared/constants/storage";
 import { fetchCurrentUser } from "../api/users";
-import type { ApiUser } from "../types/api";
+import type { ApiUser } from "../shared/types/api";
 
 const AccountScreen: React.FC = () => {
 	useAuthRedirect();

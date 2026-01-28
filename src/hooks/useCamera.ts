@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	markPermissionGranted,
 	shouldRequestPermissionOnce,
-} from "../utils/permissionOnce";
+} from "../shared/utils/permissionOnce";
 
 export const useCamera = () => {
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);

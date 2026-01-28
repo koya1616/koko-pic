@@ -408,17 +408,17 @@ npm run dev      # 開発サーバー起動・動作確認
 ## 進捗チェックリスト
 
 ### Phase 1: shared/ 基盤作成
-- [ ] 1-1: shared/ フォルダ構造作成
-- [ ] 1-2: context/ 移動
-- [ ] 1-3: types/ 移動
-- [ ] 1-4: constants/ 移動
-- [ ] 1-5: locales/ 移動
-- [ ] 1-6: data/ 移動
-- [ ] 1-7: utils/api.ts 移動
-- [ ] 1-8: api/geocoding.ts 移動
-- [ ] 1-9: utils/distance.ts, permissionOnce.ts 移動
-- [ ] 1-10: components/Snackbar.tsx 移動
-- [ ] 1-11: ビルド確認
+- [x] 1-1: shared/ フォルダ構造作成
+- [x] 1-2: context/ 移動
+- [x] 1-3: types/ 移動
+- [x] 1-4: constants/ 移動
+- [x] 1-5: locales/ 移動
+- [x] 1-6: data/ 移動
+- [x] 1-7: utils/api.ts 移動
+- [x] 1-8: api/geocoding.ts 移動
+- [x] 1-9: utils/distance.ts, permissionOnce.ts 移動
+- [x] 1-10: components/Snackbar.tsx 移動
+- [x] 1-11: ビルド確認
 
 ### Phase 2: features/ 作成
 - [ ] 2-1: features/auth/ 作成

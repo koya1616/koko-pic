@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCamera } from "../hooks/useCamera";
 import { useTranslation } from "../shared/context/LanguageContext";
 import { useSnackbar } from "../shared/context/SnackbarContext";
-import { mockRequests } from "../data/mockRequests";
+import { mockRequests } from "../shared/data/mockRequests";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 const PhotoCaptureScreen: React.FC = () => {

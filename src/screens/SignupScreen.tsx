@@ -5,7 +5,7 @@ import { useTranslation } from "../shared/context/LanguageContext";
 import { useSnackbar } from "../shared/context/SnackbarContext";
 import { validateSignupPassword } from "../utils/signupValidation";
 import { createUser } from "../api/users";
-import { STORAGE_KEYS } from "../constants/storage";
+import { STORAGE_KEYS } from "../shared/constants/storage";
 
 const SignupScreen: React.FC = () => {
 	const navigate = useNavigate();

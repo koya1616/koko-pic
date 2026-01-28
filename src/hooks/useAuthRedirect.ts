@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { STORAGE_KEYS } from "../constants/storage";
+import { STORAGE_KEYS } from "../shared/constants/storage";
 
 /**
  * Custom hook that checks for authentication token and redirects to login if not found

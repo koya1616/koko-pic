@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sortRequestsByDistance } from "./useSortedRequests";
-import type { Request } from "../types/request";
+import type { Request } from "../shared/types/request";
 
 const createRequest = (
 	id: number,

@@ -1,6 +1,6 @@
 import type React from "react";
-import { formatDistance } from "../utils/distance";
-import type { Request } from "../types/request";
+import { formatDistance } from "../shared/utils/distance";
+import type { Request } from "../shared/types/request";
 
 type RequestCardProps = {
 	request: Request;

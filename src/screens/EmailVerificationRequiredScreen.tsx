@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "../shared/context/LanguageContext";
 import { useSnackbar } from "../shared/context/SnackbarContext";
 import { resendVerificationEmail } from "../api/emailVerification";
-import { STORAGE_KEYS } from "../constants/storage";
+import { STORAGE_KEYS } from "../shared/constants/storage";
 
 const EmailVerificationRequiredScreen: React.FC = () => {
 	const navigate = useNavigate();
