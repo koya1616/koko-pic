@@ -12,7 +12,6 @@ const createRequest = (
 	location: {
 		lat,
 		lng,
-		source: "map",
 	},
 	status: "open",
 	description,

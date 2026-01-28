@@ -4,7 +4,6 @@ export type LatLng = {
 };
 
 export type RequestLocation = LatLng & {
-	source: "map" | "gps" | "search";
 	accuracy?: number;
 };
 

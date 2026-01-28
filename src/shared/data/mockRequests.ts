@@ -6,7 +6,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 35.6895,
 			lng: 139.6917,
-			source: "map",
 		},
 		status: "open",
 		placeName: "新宿駅東口",
@@ -17,7 +16,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 34.6937,
 			lng: 135.5023,
-			source: "map",
 		},
 		status: "open",
 		placeName: "梅田駅周辺",
@@ -28,7 +26,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 35.1709,
 			lng: 136.8819,
-			source: "map",
 		},
 		status: "in-progress",
 		placeName: "鶴舞公園",
@@ -39,7 +36,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 34.0459,
 			lng: 134.5593,
-			source: "map",
 		},
 		status: "completed",
 		placeName: "眉山ロープウェイ",
@@ -50,7 +46,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 43.0642,
 			lng: 141.3468,
-			source: "map",
 		},
 		status: "open",
 		placeName: "大通公園",
@@ -61,7 +56,6 @@ export const mockRequests: Request[] = [
 		location: {
 			lat: 26.2124,
 			lng: 127.6792,
-			source: "map",
 		},
 		status: "open",
 		placeName: "那覇市国際通り",
