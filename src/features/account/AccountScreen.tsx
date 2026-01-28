@@ -23,9 +23,7 @@ const AccountScreen: React.FC = () => {
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const token = localStorage.getItem(STORAGE_KEYS.authToken) || "";
-
-				const userData = await fetchCurrentUser(token);
+				const userData = await fetchCurrentUser();
 
 				setUser({
 					id: userData.id,

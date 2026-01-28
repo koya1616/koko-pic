@@ -38,9 +38,7 @@ const PhotoCaptureScreen: React.FC = () => {
 				type: "image/jpeg",
 			});
 
-			const token = localStorage.getItem("authToken") || "";
-
-			await uploadPicture(file, token);
+			await uploadPicture(file);
 
 			showSnackbar(t("photoSubmitted"), "success");
 			navigate({ to: "/" });
