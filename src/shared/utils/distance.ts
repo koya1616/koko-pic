@@ -2,6 +2,12 @@ import { EARTH_RADIUS_METERS } from "../constants/distance";
 
 type LatLng = { lat: number; lng: number };
 
+/**
+ * ハヴァサイン公式を使用して2地点間の距離を計算する
+ * @param a - 始点の緯度経度
+ * @param b - 終点の緯度経度
+ * @returns 2地点間の距離（メートル単位）
+ */
 export const haversineMeters = (a: LatLng, b: LatLng) => {
 	const dLat = ((b.lat - a.lat) * Math.PI) / 180;
 	const dLng = ((b.lng - a.lng) * Math.PI) / 180;
