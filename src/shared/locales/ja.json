@@ -3,6 +3,7 @@
 	"back": "← 戻る",
 	"home": "ホーム",
 	"createRequest": "依頼を作成",
+	"photoCaptureTitle": "撮影",
 	"postRequest": "依頼を投稿",
 	"requestContent": "依頼内容（必須）",
 	"enterRequestContent": "依頼内容を入力してください",

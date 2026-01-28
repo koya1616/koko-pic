@@ -40,7 +40,7 @@ const PhotoCaptureScreen: React.FC = () => {
 				>
 					{t("back")}
 				</button>
-				<h1 className="text-lg font-semibold">{t("createRequest")}</h1>
+				<h1 className="text-lg font-semibold">{t("photoCaptureTitle")}</h1>
 			</header>
 
 			<div className="flex flex-col flex-1 min-h-0">

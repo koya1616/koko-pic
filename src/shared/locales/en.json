@@ -3,6 +3,7 @@
 	"back": "← Back",
 	"home": "Home",
 	"createRequest": "Create Request",
+	"photoCaptureTitle": "Capture",
 	"postRequest": "Post Request",
 	"requestContent": "Request Content (Required)",
 	"enterRequestContent": "Enter request content",
