@@ -77,5 +77,7 @@
 	"verifyYourEmail": "Verify Your Email",
 	"verificationRequiredMessage": "We've sent a verification email to {email}. Please check your inbox and click the verification link to activate your account.",
 	"backToSignup": "Back to Sign Up",
-	"failedToLoadUserInfo": "Failed to load user information"
+	"failedToLoadUserInfo": "Failed to load user information",
+	"uploading": "Uploading...",
+	"uploadFailed": "Upload failed"
 }

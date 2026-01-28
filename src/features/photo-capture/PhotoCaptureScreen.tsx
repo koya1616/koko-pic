@@ -1,10 +1,12 @@
 import type React from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCamera } from "./hooks/useCamera";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import { useSnackbar } from "../../shared/context/SnackbarContext";
 import { mockRequests } from "../../shared/data/mockRequests";
 import { useAuthRedirect } from "../auth/hooks/useAuthRedirect";
+import { uploadPicture } from "./api";
 
 const PhotoCaptureScreen: React.FC = () => {
 	useAuthRedirect();
@@ -13,6 +15,7 @@ const PhotoCaptureScreen: React.FC = () => {
 	const { requestId } = useParams({ from: "/photo/$requestId" });
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
+	const [isUploading, setIsUploading] = useState(false);
 	const {
 		cameraStream,
 		capturedImage,
@@ -24,9 +27,32 @@ const PhotoCaptureScreen: React.FC = () => {
 
 	const request = mockRequests.find((r) => String(r.id) === requestId) ?? null;
 
-	const handleSubmit = () => {
-		showSnackbar(t("photoSubmitted"), "success");
-		navigate({ to: "/" });
+	const handleSubmit = async () => {
+		if (!capturedImage) return;
+
+		setIsUploading(true);
+		try {
+			const response = await fetch(capturedImage);
+			const blob = await response.blob();
+			const file = new File([blob], `photo-${Date.now()}.jpg`, {
+				type: "image/jpeg",
+			});
+
+			const token = localStorage.getItem("authToken") || "";
+
+			await uploadPicture(file, token);
+
+			showSnackbar(t("photoSubmitted"), "success");
+			navigate({ to: "/" });
+		} catch (error) {
+			console.error("Upload failed:", error);
+			showSnackbar(
+				error instanceof Error ? error.message : t("uploadFailed"),
+				"error",
+			);
+		} finally {
+			setIsUploading(false);
+		}
 	};
 
 	return (
@@ -110,14 +136,15 @@ const PhotoCaptureScreen: React.FC = () => {
 				<button
 					type="button"
 					className={`py-3 rounded-lg font-medium flex items-center justify-center ${
-						capturedImage
+						capturedImage && !isUploading
 							? "bg-green-accent text-white hover:bg-green-600"
 							: "bg-gray-300 text-gray-500 cursor-not-allowed"
 					}`}
-					disabled={!capturedImage}
+					disabled={!capturedImage || isUploading}
 					onClick={handleSubmit}
 				>
-					🚀 {t("submitPhoto")}
+					{isUploading ? "⏳" : "🚀"}{" "}
+					{isUploading ? t("uploading") : t("submitPhoto")}
 				</button>
 			</div>
 		</div>
