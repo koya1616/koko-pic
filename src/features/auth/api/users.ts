@@ -1,6 +1,6 @@
 import type { ApiUser, CreateUserRequest } from "../../../shared/types/api";
 import { apiRequest } from "../../../shared/api/client";
-import { STORAGE_KEYS } from "../../../shared/constants/storage";
+import { getAuthToken } from "../../../shared/utils/auth";
 
 export const createUser = async (request: CreateUserRequest) =>
 	apiRequest<ApiUser>("/api/v1/users", {
@@ -9,7 +9,7 @@ export const createUser = async (request: CreateUserRequest) =>
 	});
 
 export const fetchCurrentUser = async () => {
-	const token = localStorage.getItem(STORAGE_KEYS.authToken) || "";
+	const token = getAuthToken();
 	return apiRequest<ApiUser>("/api/v1/users/me", {
 		token,
 	});

@@ -1,8 +1,8 @@
 import type { Picture } from "../../../shared/types/api";
-import { STORAGE_KEYS } from "../../../shared/constants/storage";
+import { getAuthToken } from "../../../shared/utils/auth";
 
 export const uploadPicture = async (file: File) => {
-	const token = localStorage.getItem(STORAGE_KEYS.authToken) || "";
+	const token = getAuthToken();
 	const API_BASE_URL =
 		import.meta.env.VITE_API_BASE_URL || "http://0.0.0.0:8000";
 	const formData = new FormData();
