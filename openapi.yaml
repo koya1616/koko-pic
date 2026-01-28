@@ -464,6 +464,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       type: object
@@ -611,13 +616,6 @@ components:
           description: エラーメッセージ
       required:
         - error
-security:
-  - bearerAuth: []
-securityDefinitions:
-  bearerAuth:
-    type: http
-    scheme: bearer
-    bearerFormat: JWT
 tags:
   - name: Authentication
     description: ユーザー認証エンドポイント
