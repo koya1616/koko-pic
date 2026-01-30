@@ -12,5 +12,5 @@ export interface Request {
 	status: RequestStatus;
 	placeName?: string;
 	description: string;
-	distance?: number;
+	distance?: number | null;
 }

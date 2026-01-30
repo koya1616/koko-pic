@@ -49,3 +49,17 @@ export interface Picture {
 export interface PicturesResponse {
 	pictures: Picture[];
 }
+
+export interface RequestWithDistance {
+	id: number;
+	lat: number;
+	lng: number;
+	status: "open" | "in-progress" | "completed";
+	placeName?: string;
+	description: string;
+	distance?: number | null;
+}
+
+export interface RequestsResponse {
+	requests: RequestWithDistance[];
+}

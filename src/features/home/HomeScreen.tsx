@@ -4,9 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
 import type { Request, RequestStatus } from "../../shared/types/request";
 import RequestCard from "./components/RequestCard";
-import { mockRequests } from "../../shared/data/mockRequests";
+import { getRequests } from "./api";
 import { useGeolocation } from "./hooks/useGeolocation";
-import { useSortedRequests } from "./hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../../shared/constants/map";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import LanguageSwitcher from "./components/LanguageSwitcher";
@@ -24,10 +23,11 @@ const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const { location: userLocation, error: locationError } = useGeolocation();
-	const sortedRequests = useSortedRequests(mockRequests, userLocation);
+	const [requests, setRequests] = useState<Request[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 	const requestsWithLocation = useMemo(
-		() => sortedRequests.filter(hasLocation),
-		[sortedRequests],
+		() => requests.filter(hasLocation),
+		[requests],
 	);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
@@ -41,11 +41,30 @@ const HomeScreen: React.FC = () => {
 	const selectedRequest = useMemo(
 		() =>
 			selectedRequestId
-				? (sortedRequests.find((request) => request.id === selectedRequestId) ??
-					null)
+				? (requests.find((request) => request.id === selectedRequestId) ?? null)
 				: null,
-		[selectedRequestId, sortedRequests],
+		[selectedRequestId, requests],
 	);
+
+	useEffect(() => {
+		const fetchRequests = async () => {
+			setIsLoading(true);
+			try {
+				const response = await getRequests(
+					userLocation
+						? { lat: userLocation.lat, lng: userLocation.lng }
+						: undefined,
+				);
+				setRequests(response.requests);
+			} catch (error) {
+				console.error("Failed to fetch requests:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchRequests();
+	}, [userLocation]);
 
 	useEffect(() => {
 		if (!mapContainerRef.current || mapRef.current) {
@@ -232,10 +251,12 @@ const HomeScreen: React.FC = () => {
 			{/* Request List */}
 			<div className="p-4 space-y-3">
 				<h2 className="font-semibold text-gray-700">{t("nearbyRequests")}</h2>
-				{sortedRequests.length === 0 && !locationError ? (
+				{isLoading ? (
 					<div className="text-sm text-gray-500">{t("gettingLocation")}</div>
+				) : requests.length === 0 ? (
+					<div className="text-sm text-gray-500">No requests available</div>
 				) : null}
-				{sortedRequests.map((request) => (
+				{requests.map((request) => (
 					<RequestCard
 						key={request.id}
 						request={request}
