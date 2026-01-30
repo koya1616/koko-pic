@@ -5,5 +5,5 @@ export const formatDistance = (meters: number) => {
 		return `${trimmed}km`;
 	}
 
-	return `${meters}m`;
+	return `${Math.round(meters)}m`;
 };
