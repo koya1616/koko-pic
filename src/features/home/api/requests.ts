@@ -26,6 +26,12 @@ export const getRequests = async (params?: {
 	return apiRequest<RequestsResponse>(path);
 };
 
+export const getRequestById = async (
+	requestId: number,
+): Promise<ApiRequest> => {
+	return apiRequest<ApiRequest>(`/api/v1/requests/${requestId}`);
+};
+
 export const createRequest = async (
 	input: CreateRequestInput,
 ): Promise<ApiRequest> => {

@@ -120,7 +120,7 @@ const HomeScreen: React.FC = () => {
 						offset: 25,
 					})
 						.setLngLat([request.lng, request.lat])
-						.setText(request.placeName ?? "Location")
+						.setText(request.place_name)
 						.addTo(map);
 
 					popupRef.current = popup;

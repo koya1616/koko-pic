@@ -1,12 +1,13 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCamera } from "./hooks/useCamera";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import { useSnackbar } from "../../shared/context/SnackbarContext";
-import { mockRequests } from "../../shared/data/mockRequests";
 import { useAuthRedirect } from "../auth/hooks/useAuthRedirect";
 import { uploadPicture } from "./api";
+import { getRequestById } from "../home/api";
+import type { Request } from "../../shared/types/request";
 
 const PhotoCaptureScreen: React.FC = () => {
 	useAuthRedirect();
@@ -16,6 +17,7 @@ const PhotoCaptureScreen: React.FC = () => {
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
 	const [isUploading, setIsUploading] = useState(false);
+	const [request, setRequest] = useState<Request | null>(null);
 	const {
 		cameraStream,
 		capturedImage,
@@ -25,7 +27,18 @@ const PhotoCaptureScreen: React.FC = () => {
 		videoRef,
 	} = useCamera();
 
-	const request = mockRequests.find((r) => String(r.id) === requestId) ?? null;
+	useEffect(() => {
+		const fetchRequest = async () => {
+			try {
+				const foundRequest = await getRequestById(Number(requestId));
+				setRequest(foundRequest);
+			} catch (error) {
+				console.error("Failed to fetch request:", error);
+			}
+		};
+
+		fetchRequest();
+	}, [requestId]);
 
 	const handleSubmit = async () => {
 		if (!capturedImage) return;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { getRequests, createRequest } from "./requests";
+import { getRequests, getRequestById, createRequest } from "./requests";
 import * as client from "../../../shared/api/client";
 import * as auth from "../../../shared/utils/auth";
 
@@ -70,7 +70,7 @@ describe("getRequests", () => {
 					lat: 35.6895,
 					lng: 139.6917,
 					status: "open" as const,
-					placeName: "Test Place",
+					place_name: "Test Place",
 					description: "Test description",
 					distance: 100,
 				},
@@ -80,6 +80,33 @@ describe("getRequests", () => {
 
 		const result = await getRequests({ lat: 35.6895, lng: 139.6917 });
 
+		expect(result).toEqual(mockResponse);
+	});
+});
+
+describe("getRequestById", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it("指定されたIDのリクエストを取得する", async () => {
+		const mockResponse = {
+			id: 1,
+			lat: 35.6895,
+			lng: 139.6917,
+			status: "open" as const,
+			place_name: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		vi.mocked(client.apiRequest).mockResolvedValue(mockResponse);
+
+		const result = await getRequestById(1);
+
+		expect(client.apiRequest).toHaveBeenCalledWith("/api/v1/requests/1");
 		expect(result).toEqual(mockResponse);
 	});
 });
@@ -97,7 +124,7 @@ describe("createRequest", () => {
 		const mockInput = {
 			lat: 35.6895,
 			lng: 139.6917,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		const mockToken = "test-token-123";
@@ -106,7 +133,7 @@ describe("createRequest", () => {
 			lat: 35.6895,
 			lng: 139.6917,
 			status: "open" as const,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);
@@ -122,11 +149,11 @@ describe("createRequest", () => {
 		});
 	});
 
-	it("placeNameを含むリクエストを作成できる", async () => {
+	it("place_nameを含むリクエストを作成できる", async () => {
 		const mockInput = {
 			lat: 35.6895,
 			lng: 139.6917,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		const mockToken = "test-token-123";
@@ -135,7 +162,7 @@ describe("createRequest", () => {
 			lat: 35.6895,
 			lng: 139.6917,
 			status: "open" as const,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);
@@ -154,7 +181,7 @@ describe("createRequest", () => {
 		const mockInput = {
 			lat: 35.6895,
 			lng: 139.6917,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		const mockToken = "test-token-123";
@@ -163,7 +190,7 @@ describe("createRequest", () => {
 			lat: 35.6895,
 			lng: 139.6917,
 			status: "open" as const,
-			placeName: "新宿駅",
+			place_name: "新宿駅",
 			description: "駅前の混雑状況を教えてください",
 		};
 		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);

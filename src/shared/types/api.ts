@@ -55,7 +55,7 @@ export interface RequestWithDistance {
 	lat: number;
 	lng: number;
 	status: "open" | "in-progress" | "completed";
-	placeName: string;
+	place_name: string;
 	description: string;
 	distance?: number | null;
 }
@@ -67,7 +67,7 @@ export interface RequestsResponse {
 export interface CreateRequestInput {
 	lat: number;
 	lng: number;
-	placeName: string;
+	place_name: string;
 	description: string;
 }
 
@@ -76,6 +76,6 @@ export interface ApiRequest {
 	lat: number;
 	lng: number;
 	status: "open" | "in-progress" | "completed";
-	placeName: string;
+	place_name: string;
 	description: string;
 }

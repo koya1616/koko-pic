@@ -114,7 +114,7 @@ const RequestCreationScreen: React.FC = () => {
 				await createRequest({
 					lat: selectedLocation.lat,
 					lng: selectedLocation.lng,
-					placeName: selectedPlaceLabel,
+					place_name: selectedPlaceLabel,
 					description,
 				});
 
