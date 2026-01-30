@@ -119,9 +119,28 @@ const HomeScreen: React.FC = () => {
 			userMarkerRef.current?.remove();
 			userMarkerRef.current = null;
 			if (userLocation) {
-				userMarkerRef.current = new maplibregl.Marker({ color: "#0f172a" })
+				const userMarker = new maplibregl.Marker({ color: "#0f172a" })
 					.setLngLat([userLocation.lng, userLocation.lat])
 					.addTo(map);
+				
+				userMarker.getElement().addEventListener("click", () => {
+					// Remove existing popup if any
+					popupRef.current?.remove();
+
+					// Create and show popup for user location
+					const popup = new maplibregl.Popup({
+						closeButton: true,
+						closeOnClick: false,
+						offset: 25,
+					})
+						.setLngLat([userLocation.lng, userLocation.lat])
+						.setText("現在地")
+						.addTo(map);
+
+					popupRef.current = popup;
+				});
+				
+				userMarkerRef.current = userMarker;
 			}
 
 			if (userLocation) {
