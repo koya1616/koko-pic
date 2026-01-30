@@ -1,0 +1,1 @@
+export { uploadPicture } from "./pictures";
