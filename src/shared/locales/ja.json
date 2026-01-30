@@ -82,5 +82,6 @@
 	"uploadFailed": "アップロードに失敗しました",
 	"unauthorized": "認証されていません",
 	"requestPostFailed": "依頼の投稿に失敗しました",
-	"posting": "投稿中..."
+	"posting": "投稿中...",
+	"currentLocation": "現在地"
 }

@@ -82,5 +82,6 @@
 	"uploadFailed": "Upload failed",
 	"unauthorized": "Unauthorized",
 	"requestPostFailed": "Failed to post request",
-	"posting": "Posting..."
+	"posting": "Posting...",
+	"currentLocation": "Current Location"
 }

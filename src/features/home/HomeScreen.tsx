@@ -9,6 +9,7 @@ import { useGeolocation } from "./hooks/useGeolocation";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../../shared/constants/map";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import { reverseGeocode } from "../../shared/api/geocoding";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",
@@ -18,7 +19,7 @@ const STATUS_COLORS: Record<RequestStatus, string> = {
 
 const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
-	const { t } = useTranslation();
+	const { t, language } = useTranslation();
 	const { location: userLocation, error: locationError } = useGeolocation();
 	const [requests, setRequests] = useState<Request[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -109,7 +110,7 @@ const HomeScreen: React.FC = () => {
 				})
 					.setLngLat([request.lng, request.lat])
 					.addTo(map);
-				marker.getElement().addEventListener("click", () => {
+				marker.getElement().addEventListener("click", async () => {
 					setSelectedRequestId(request.id);
 
 					popupRef.current?.remove();
@@ -120,10 +121,24 @@ const HomeScreen: React.FC = () => {
 						offset: 25,
 					})
 						.setLngLat([request.lng, request.lat])
-						.setText(request.place_name)
+						.setText(t("searching"))
 						.addTo(map);
 
 					popupRef.current = popup;
+
+					try {
+						const result = await reverseGeocode({
+							lat: request.lat,
+							lng: request.lng,
+							language: language.toLowerCase(),
+						});
+						popup.setText(
+							result.display_name ?? result.name ?? request.place_name,
+						);
+					} catch (error) {
+						console.error("Failed to fetch place name:", error);
+						popup.setText(request.place_name);
+					}
 				});
 				requestMarkersRef.current.push(marker);
 			}
@@ -136,17 +151,15 @@ const HomeScreen: React.FC = () => {
 					.addTo(map);
 
 				userMarker.getElement().addEventListener("click", () => {
-					// Remove existing popup if any
 					popupRef.current?.remove();
 
-					// Create and show popup for user location
 					const popup = new maplibregl.Popup({
 						closeButton: true,
 						closeOnClick: false,
 						offset: 25,
 					})
 						.setLngLat([userLocation.lng, userLocation.lat])
-						.setText("現在地")
+						.setText(t("currentLocation"))
 						.addTo(map);
 
 					popupRef.current = popup;
@@ -191,7 +204,7 @@ const HomeScreen: React.FC = () => {
 		} else {
 			map.once("load", updateMarkers);
 		}
-	}, [requests, userLocation]);
+	}, [requests, userLocation, language, t]);
 
 	const handleRequestSelect = (selected: Request) => {
 		navigate({
