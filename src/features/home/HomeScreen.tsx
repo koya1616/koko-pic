@@ -34,6 +34,7 @@ const HomeScreen: React.FC = () => {
 	const requestMarkersRef = useRef<maplibregl.Marker[]>([]);
 	const userMarkerRef = useRef<maplibregl.Marker | null>(null);
 	const hasCenteredOnUserRef = useRef(false);
+	const popupRef = useRef<maplibregl.Popup | null>(null);
 	const [selectedRequestId, setSelectedRequestId] = useState<number | null>(
 		null,
 	);
@@ -69,6 +70,7 @@ const HomeScreen: React.FC = () => {
 		mapRef.current = map;
 
 		return () => {
+			popupRef.current?.remove();
 			map.remove();
 			mapRef.current = null;
 			requestMarkersRef.current = [];
@@ -97,6 +99,19 @@ const HomeScreen: React.FC = () => {
 					.addTo(map);
 				marker.getElement().addEventListener("click", () => {
 					setSelectedRequestId(request.id);
+
+					popupRef.current?.remove();
+
+					const popup = new maplibregl.Popup({
+						closeButton: true,
+						closeOnClick: false,
+						offset: 25,
+					})
+						.setLngLat([request.lng, request.lat])
+						.setText(request.placeName ?? "Location")
+						.addTo(map);
+
+					popupRef.current = popup;
 				});
 				requestMarkersRef.current.push(marker);
 			}
