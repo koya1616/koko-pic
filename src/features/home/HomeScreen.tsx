@@ -122,7 +122,7 @@ const HomeScreen: React.FC = () => {
 				const userMarker = new maplibregl.Marker({ color: "#0f172a" })
 					.setLngLat([userLocation.lng, userLocation.lat])
 					.addTo(map);
-				
+
 				userMarker.getElement().addEventListener("click", () => {
 					// Remove existing popup if any
 					popupRef.current?.remove();
@@ -139,7 +139,7 @@ const HomeScreen: React.FC = () => {
 
 					popupRef.current = popup;
 				});
-				
+
 				userMarkerRef.current = userMarker;
 			}
 
