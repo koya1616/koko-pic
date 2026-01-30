@@ -288,47 +288,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    get:
-      summary: 写真一覧
-      description: オプションのフィルターで写真のページネートされたリストを取得
-      tags:
-        - Pictures
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  pictures:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Picture'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /api/v1/pictures/{picture_id}:
     delete:
       summary: 写真を削除
@@ -754,10 +713,9 @@ components:
           type: string
           enum: [open, in-progress, completed]
           description: リクエストのステータス
-        placeName:
+        place_name:
           type: string
           description: 場所の名前
-          nullable: true
         description:
           type: string
           description: リクエストの説明
@@ -766,6 +724,7 @@ components:
         - lat
         - lng
         - status
+        - place_name
         - description
     RequestWithDistance:
       allOf:
@@ -788,16 +747,16 @@ components:
           type: number
           format: double
           description: リクエスト位置の経度
-        placeName:
+        place_name:
           type: string
           description: 場所の名前
-          nullable: true
         description:
           type: string
           description: リクエストの説明
       required:
         - lat
         - lng
+        - place_name
         - description
     UpdateRequestInput:
       type: object
@@ -814,7 +773,7 @@ components:
           type: string
           enum: [open, in-progress, completed]
           description: リクエストのステータス
-        placeName:
+        place_name:
           type: string
           description: 場所の名前
           nullable: true

@@ -25,7 +25,7 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		</div>
 		<div className="flex items-center justify-between mt-3 text-sm text-gray-500">
 			<span>
-				{request.distance !== undefined
+				{request.distance !== undefined && request.distance !== null
 					? `距離: ${formatDistance(request.distance)}`
 					: "距離: 取得できません"}
 			</span>

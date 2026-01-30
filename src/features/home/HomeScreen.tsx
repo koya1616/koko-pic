@@ -4,12 +4,12 @@ import { useNavigate } from "@tanstack/react-router";
 import maplibregl from "maplibre-gl";
 import type { Request, RequestStatus } from "../../shared/types/request";
 import RequestCard from "./components/RequestCard";
-import { mockRequests } from "../../shared/data/mockRequests";
+import { getRequests } from "./api";
 import { useGeolocation } from "./hooks/useGeolocation";
-import { useSortedRequests } from "./hooks/useSortedRequests";
 import { FALLBACK_CENTER, MAP_STYLE_URL } from "../../shared/constants/map";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import { reverseGeocode } from "../../shared/api/geocoding";
 
 const STATUS_COLORS: Record<RequestStatus, string> = {
 	open: "#4f46e5",
@@ -17,34 +17,48 @@ const STATUS_COLORS: Record<RequestStatus, string> = {
 	completed: "#22c55e",
 };
 
-const hasLocation = (request: Request): boolean =>
-	typeof request.lat === "number" && typeof request.lng === "number";
-
 const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
-	const { t } = useTranslation();
+	const { t, language } = useTranslation();
 	const { location: userLocation, error: locationError } = useGeolocation();
-	const sortedRequests = useSortedRequests(mockRequests, userLocation);
-	const requestsWithLocation = useMemo(
-		() => sortedRequests.filter(hasLocation),
-		[sortedRequests],
-	);
+	const [requests, setRequests] = useState<Request[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const requestMarkersRef = useRef<maplibregl.Marker[]>([]);
 	const userMarkerRef = useRef<maplibregl.Marker | null>(null);
 	const hasCenteredOnUserRef = useRef(false);
+	const popupRef = useRef<maplibregl.Popup | null>(null);
 	const [selectedRequestId, setSelectedRequestId] = useState<number | null>(
 		null,
 	);
 	const selectedRequest = useMemo(
 		() =>
 			selectedRequestId
-				? (sortedRequests.find((request) => request.id === selectedRequestId) ??
-					null)
+				? (requests.find((request) => request.id === selectedRequestId) ?? null)
 				: null,
-		[selectedRequestId, sortedRequests],
+		[selectedRequestId, requests],
 	);
+
+	useEffect(() => {
+		const fetchRequests = async () => {
+			setIsLoading(true);
+			try {
+				const response = await getRequests(
+					userLocation
+						? { lat: userLocation.lat, lng: userLocation.lng }
+						: undefined,
+				);
+				setRequests(response.requests);
+			} catch (error) {
+				console.error("Failed to fetch requests:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchRequests();
+	}, [userLocation]);
 
 	useEffect(() => {
 		if (!mapContainerRef.current || mapRef.current) {
@@ -69,6 +83,7 @@ const HomeScreen: React.FC = () => {
 		mapRef.current = map;
 
 		return () => {
+			popupRef.current?.remove();
 			map.remove();
 			mapRef.current = null;
 			requestMarkersRef.current = [];
@@ -89,14 +104,41 @@ const HomeScreen: React.FC = () => {
 			});
 			requestMarkersRef.current = [];
 
-			for (const request of requestsWithLocation) {
+			for (const request of requests) {
 				const marker = new maplibregl.Marker({
 					color: STATUS_COLORS[request.status] ?? STATUS_COLORS.open,
 				})
 					.setLngLat([request.lng, request.lat])
 					.addTo(map);
-				marker.getElement().addEventListener("click", () => {
+				marker.getElement().addEventListener("click", async () => {
 					setSelectedRequestId(request.id);
+
+					popupRef.current?.remove();
+
+					const popup = new maplibregl.Popup({
+						closeButton: true,
+						closeOnClick: false,
+						offset: 25,
+					})
+						.setLngLat([request.lng, request.lat])
+						.setText(t("searching"))
+						.addTo(map);
+
+					popupRef.current = popup;
+
+					try {
+						const result = await reverseGeocode({
+							lat: request.lat,
+							lng: request.lng,
+							language: language.toLowerCase(),
+						});
+						popup.setText(
+							result.display_name ?? result.name ?? request.place_name,
+						);
+					} catch (error) {
+						console.error("Failed to fetch place name:", error);
+						popup.setText(request.place_name);
+					}
 				});
 				requestMarkersRef.current.push(marker);
 			}
@@ -104,9 +146,26 @@ const HomeScreen: React.FC = () => {
 			userMarkerRef.current?.remove();
 			userMarkerRef.current = null;
 			if (userLocation) {
-				userMarkerRef.current = new maplibregl.Marker({ color: "#0f172a" })
+				const userMarker = new maplibregl.Marker({ color: "#0f172a" })
 					.setLngLat([userLocation.lng, userLocation.lat])
 					.addTo(map);
+
+				userMarker.getElement().addEventListener("click", () => {
+					popupRef.current?.remove();
+
+					const popup = new maplibregl.Popup({
+						closeButton: true,
+						closeOnClick: false,
+						offset: 25,
+					})
+						.setLngLat([userLocation.lng, userLocation.lat])
+						.setText(t("currentLocation"))
+						.addTo(map);
+
+					popupRef.current = popup;
+				});
+
+				userMarkerRef.current = userMarker;
 			}
 
 			if (userLocation) {
@@ -123,7 +182,7 @@ const HomeScreen: React.FC = () => {
 
 			const bounds = new maplibregl.LngLatBounds();
 			let hasBounds = false;
-			for (const request of requestsWithLocation) {
+			for (const request of requests) {
 				bounds.extend([request.lng, request.lat]);
 				hasBounds = true;
 			}
@@ -145,11 +204,11 @@ const HomeScreen: React.FC = () => {
 		} else {
 			map.once("load", updateMarkers);
 		}
-	}, [requestsWithLocation, userLocation]);
+	}, [requests, userLocation, language, t]);
 
 	const handleRequestSelect = (selected: Request) => {
 		navigate({
-			to: "/photo/$requestId",
+			to: "/request/$requestId",
 			params: { requestId: String(selected.id) },
 		});
 	};
@@ -198,10 +257,12 @@ const HomeScreen: React.FC = () => {
 			{/* Request List */}
 			<div className="p-4 space-y-3">
 				<h2 className="font-semibold text-gray-700">{t("nearbyRequests")}</h2>
-				{sortedRequests.length === 0 && !locationError ? (
+				{isLoading ? (
 					<div className="text-sm text-gray-500">{t("gettingLocation")}</div>
+				) : requests.length === 0 ? (
+					<div className="text-sm text-gray-500">No requests available</div>
 				) : null}
-				{sortedRequests.map((request) => (
+				{requests.map((request) => (
 					<RequestCard
 						key={request.id}
 						request={request}

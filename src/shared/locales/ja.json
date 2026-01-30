@@ -79,5 +79,9 @@
 	"backToSignup": "サインアップに戻る",
 	"failedToLoadUserInfo": "ユーザー情報の読み込みに失敗しました",
 	"uploading": "アップロード中...",
-	"uploadFailed": "アップロードに失敗しました"
+	"uploadFailed": "アップロードに失敗しました",
+	"unauthorized": "認証されていません",
+	"requestPostFailed": "依頼の投稿に失敗しました",
+	"posting": "投稿中...",
+	"currentLocation": "現在地"
 }
