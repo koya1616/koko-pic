@@ -16,19 +16,12 @@ const STATUS_COLORS: Record<RequestStatus, string> = {
 	completed: "#22c55e",
 };
 
-const hasLocation = (request: Request): boolean =>
-	typeof request.lat === "number" && typeof request.lng === "number";
-
 const HomeScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const { location: userLocation, error: locationError } = useGeolocation();
 	const [requests, setRequests] = useState<Request[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const requestsWithLocation = useMemo(
-		() => requests.filter(hasLocation),
-		[requests],
-	);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const requestMarkersRef = useRef<maplibregl.Marker[]>([]);
@@ -110,7 +103,7 @@ const HomeScreen: React.FC = () => {
 			});
 			requestMarkersRef.current = [];
 
-			for (const request of requestsWithLocation) {
+			for (const request of requests) {
 				const marker = new maplibregl.Marker({
 					color: STATUS_COLORS[request.status] ?? STATUS_COLORS.open,
 				})
@@ -176,7 +169,7 @@ const HomeScreen: React.FC = () => {
 
 			const bounds = new maplibregl.LngLatBounds();
 			let hasBounds = false;
-			for (const request of requestsWithLocation) {
+			for (const request of requests) {
 				bounds.extend([request.lng, request.lat]);
 				hasBounds = true;
 			}
@@ -198,7 +191,7 @@ const HomeScreen: React.FC = () => {
 		} else {
 			map.once("load", updateMarkers);
 		}
-	}, [requestsWithLocation, userLocation]);
+	}, [requests, userLocation]);
 
 	const handleRequestSelect = (selected: Request) => {
 		navigate({
