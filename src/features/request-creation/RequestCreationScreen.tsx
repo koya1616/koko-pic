@@ -408,6 +408,7 @@ const RequestCreationScreen: React.FC = () => {
 		}
 
 		reverseLookupIdRef.current += 1;
+		setSelectedLocation(coordinates);
 		setSelectedPlaceLabel(result.display_name);
 		showPopup(result.display_name, coordinates);
 		setSearchResults([]);
