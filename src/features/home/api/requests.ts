@@ -1,5 +1,10 @@
 import { apiRequest } from "../../../shared/api/client";
-import type { RequestsResponse } from "../../../shared/types/api";
+import type {
+	RequestsResponse,
+	CreateRequestInput,
+	ApiRequest,
+} from "../../../shared/types/api";
+import { getAuthToken } from "../../../shared/utils/auth";
 
 export const getRequests = async (params?: {
 	lat?: number;
@@ -19,4 +24,15 @@ export const getRequests = async (params?: {
 		: "/api/v1/requests";
 
 	return apiRequest<RequestsResponse>(path);
+};
+
+export const createRequest = async (
+	input: CreateRequestInput,
+): Promise<ApiRequest> => {
+	const token = getAuthToken();
+	return apiRequest<ApiRequest>("/api/v1/requests", {
+		method: "POST",
+		body: input,
+		token,
+	});
 };

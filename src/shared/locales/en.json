@@ -79,5 +79,8 @@
 	"backToSignup": "Back to Sign Up",
 	"failedToLoadUserInfo": "Failed to load user information",
 	"uploading": "Uploading...",
-	"uploadFailed": "Upload failed"
+	"uploadFailed": "Upload failed",
+	"unauthorized": "Unauthorized",
+	"requestPostFailed": "Failed to post request",
+	"posting": "Posting..."
 }

@@ -10,7 +10,7 @@ export interface Request {
 	lat: number;
 	lng: number;
 	status: RequestStatus;
-	placeName?: string;
+	placeName: string;
 	description: string;
 	distance?: number | null;
 }

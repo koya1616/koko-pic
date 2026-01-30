@@ -757,6 +757,7 @@ components:
       required:
         - lat
         - lng
+        - placeName
         - description
     UpdateRequestInput:
       type: object

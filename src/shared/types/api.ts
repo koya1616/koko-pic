@@ -55,11 +55,27 @@ export interface RequestWithDistance {
 	lat: number;
 	lng: number;
 	status: "open" | "in-progress" | "completed";
-	placeName?: string;
+	placeName: string;
 	description: string;
 	distance?: number | null;
 }
 
 export interface RequestsResponse {
 	requests: RequestWithDistance[];
+}
+
+export interface CreateRequestInput {
+	lat: number;
+	lng: number;
+	placeName: string;
+	description: string;
+}
+
+export interface ApiRequest {
+	id: number;
+	lat: number;
+	lng: number;
+	status: "open" | "in-progress" | "completed";
+	placeName: string;
+	description: string;
 }

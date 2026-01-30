@@ -7,11 +7,13 @@ const createRequest = (
 	lat: number,
 	lng: number,
 	description = "test",
+	placeName = "Test Place",
 ): Request => ({
 	id,
 	lat,
 	lng,
 	status: "open",
+	placeName,
 	description,
 });
 
@@ -42,6 +44,7 @@ describe("sortRequestsByDistance", () => {
 				lat: NaN,
 				lng: NaN,
 				status: "open",
+				placeName: "No Location Place",
 				description: "no location",
 			},
 			createRequest(3, 0, 0.01),

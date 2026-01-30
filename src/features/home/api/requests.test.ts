@@ -1,9 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { getRequests } from "./requests";
+import { getRequests, createRequest } from "./requests";
 import * as client from "../../../shared/api/client";
+import * as auth from "../../../shared/utils/auth";
 
 vi.mock("../../../shared/api/client", () => ({
 	apiRequest: vi.fn(),
+}));
+
+vi.mock("../../../shared/utils/auth", () => ({
+	getAuthToken: vi.fn(),
 }));
 
 describe("getRequests", () => {
@@ -74,6 +79,97 @@ describe("getRequests", () => {
 		vi.mocked(client.apiRequest).mockResolvedValue(mockResponse);
 
 		const result = await getRequests({ lat: 35.6895, lng: 139.6917 });
+
+		expect(result).toEqual(mockResponse);
+	});
+});
+
+describe("createRequest", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it("POSTメソッドで正しいパスとボディとトークンでapiRequestを呼び出す", async () => {
+		const mockInput = {
+			lat: 35.6895,
+			lng: 139.6917,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		const mockToken = "test-token-123";
+		const mockResponse = {
+			id: 1,
+			lat: 35.6895,
+			lng: 139.6917,
+			status: "open" as const,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);
+		vi.mocked(client.apiRequest).mockResolvedValue(mockResponse);
+
+		await createRequest(mockInput);
+
+		expect(auth.getAuthToken).toHaveBeenCalled();
+		expect(client.apiRequest).toHaveBeenCalledWith("/api/v1/requests", {
+			method: "POST",
+			body: mockInput,
+			token: mockToken,
+		});
+	});
+
+	it("placeNameを含むリクエストを作成できる", async () => {
+		const mockInput = {
+			lat: 35.6895,
+			lng: 139.6917,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		const mockToken = "test-token-123";
+		const mockResponse = {
+			id: 1,
+			lat: 35.6895,
+			lng: 139.6917,
+			status: "open" as const,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);
+		vi.mocked(client.apiRequest).mockResolvedValue(mockResponse);
+
+		await createRequest(mockInput);
+
+		expect(client.apiRequest).toHaveBeenCalledWith("/api/v1/requests", {
+			method: "POST",
+			body: mockInput,
+			token: mockToken,
+		});
+	});
+
+	it("apiRequestのレスポンスを正しく返す", async () => {
+		const mockInput = {
+			lat: 35.6895,
+			lng: 139.6917,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		const mockToken = "test-token-123";
+		const mockResponse = {
+			id: 1,
+			lat: 35.6895,
+			lng: 139.6917,
+			status: "open" as const,
+			placeName: "新宿駅",
+			description: "駅前の混雑状況を教えてください",
+		};
+		vi.mocked(auth.getAuthToken).mockReturnValue(mockToken);
+		vi.mocked(client.apiRequest).mockResolvedValue(mockResponse);
+
+		const result = await createRequest(mockInput);
 
 		expect(result).toEqual(mockResponse);
 	});

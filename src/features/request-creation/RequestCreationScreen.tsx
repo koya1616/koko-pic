@@ -15,6 +15,7 @@ import { reverseGeocode, searchGeocode } from "../../shared/api/geocoding";
 import { useTranslation } from "../../shared/context/LanguageContext";
 import { useSnackbar } from "../../shared/context/SnackbarContext";
 import { useAuthRedirect } from "../auth/hooks/useAuthRedirect";
+import { createRequest } from "../home/api";
 
 type MapLabelLanguage = "ja" | "en";
 
@@ -65,7 +66,6 @@ const RequestCreationScreen: React.FC = () => {
 	const navigate = useNavigate();
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
-	const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 	const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 	const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null);
 	const [locationError, setLocationError] = useState<string | null>(null);
@@ -76,6 +76,7 @@ const RequestCreationScreen: React.FC = () => {
 		null,
 	);
 	const [isSearching, setIsSearching] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [defaultCenter, setDefaultCenter] = useState<LatLng>(FALLBACK_CENTER);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
@@ -101,10 +102,36 @@ const RequestCreationScreen: React.FC = () => {
 		[selectedLocation, currentLocation, mapLabelLanguage],
 	);
 
-	const handlePost = useCallback(() => {
-		showSnackbar(t("requestPosted"), "success");
-		navigate({ to: "/" });
-	}, [navigate, showSnackbar, t]);
+	const handlePost = useCallback(
+		async (description: string) => {
+			if (!selectedLocation || !selectedPlaceLabel) {
+				showSnackbar(t("selectLocation"), "error");
+				return;
+			}
+
+			setIsSubmitting(true);
+			try {
+				await createRequest({
+					lat: selectedLocation.lat,
+					lng: selectedLocation.lng,
+					placeName: selectedPlaceLabel,
+					description,
+				});
+
+				showSnackbar(t("requestPosted"), "success");
+				navigate({ to: "/" });
+			} catch (error) {
+				console.error("Failed to create request:", error);
+				showSnackbar(
+					error instanceof Error ? error.message : t("requestPostFailed"),
+					"error",
+				);
+			} finally {
+				setIsSubmitting(false);
+			}
+		},
+		[selectedLocation, selectedPlaceLabel, showSnackbar, t, navigate],
+	);
 
 	const { handleSubmit, requestText, setRequestText } = useRequestForm({
 		onSubmit: handlePost,
@@ -171,17 +198,6 @@ const RequestCreationScreen: React.FC = () => {
 	);
 
 	useEffect(() => {
-		if (!isLocationEnabled) {
-			if (mapRef.current) {
-				mapRef.current.remove();
-				mapRef.current = null;
-				selectedMarkerRef.current = null;
-				currentMarkerRef.current = null;
-				popupRef.current = null;
-			}
-			return;
-		}
-
 		if (!mapContainerRef.current || mapRef.current) {
 			return;
 		}
@@ -221,7 +237,6 @@ const RequestCreationScreen: React.FC = () => {
 
 		mapRef.current = map;
 	}, [
-		isLocationEnabled,
 		selectedLocation,
 		currentLocation,
 		mapLabelLanguage,
@@ -232,10 +247,6 @@ const RequestCreationScreen: React.FC = () => {
 	]);
 
 	useEffect(() => {
-		if (!isLocationEnabled) {
-			return;
-		}
-
 		let isActive = true;
 
 		const requestLocation = async () => {
@@ -290,7 +301,7 @@ const RequestCreationScreen: React.FC = () => {
 		return () => {
 			isActive = false;
 		};
-	}, [isLocationEnabled, t]);
+	}, [t]);
 
 	useEffect(() => {
 		if (!mapRef.current) {
@@ -361,20 +372,6 @@ const RequestCreationScreen: React.FC = () => {
 			]);
 		}
 	}, [currentLocation]);
-
-	const handleToggleLocation = () => {
-		setIsLocationEnabled((prev) => {
-			if (prev) {
-				setSelectedLocation(null);
-				setCurrentLocation(null);
-				setLocationError(null);
-				setSearchError(null);
-				setSearchResults([]);
-				setSelectedPlaceLabel(null);
-			}
-			return !prev;
-		});
-	};
 
 	const handleSearchLocation = async () => {
 		const query = searchQuery.trim();
@@ -448,90 +445,84 @@ const RequestCreationScreen: React.FC = () => {
 			</div>
 
 			<div className="mb-4 rounded-lg border border-gray-200 bg-white p-3">
-				<div className="flex items-center justify-between">
-					<div className="text-sm font-medium text-gray-700">
-						{t("selectLocation")}
-					</div>
-					<input
-						type="checkbox"
-						className="h-5 w-5 accent-green-600"
-						checked={isLocationEnabled}
-						onChange={handleToggleLocation}
-						aria-label={t("selectLocation")}
-					/>
+				<div className="text-sm font-medium text-gray-700 mb-3">
+					{t("selectLocation")} <span className="text-red-500">*</span>
 				</div>
 
-				{isLocationEnabled && (
-					<div className="mt-3 space-y-2">
-						<div>
-							<div className="mt-2 flex flex-wrap gap-2">
-								<input
-									type="text"
-									value={searchQuery}
-									onChange={(event) => setSearchQuery(event.target.value)}
-									onKeyDown={(event) => {
-										if (event.key === "Enter") {
-											event.preventDefault();
-											handleSearchLocation();
-										}
-									}}
-									placeholder={t("searchPlaceholder")}
-									className="flex-1 min-w-[180px] rounded-md border border-gray-200 px-3 py-2 text-sm"
-								/>
-								<button
-									type="button"
-									className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50 disabled:text-gray-300"
-									onClick={handleSearchLocation}
-									disabled={isSearching}
-								>
-									{isSearching ? t("searching") : t("search")}
-								</button>
-							</div>
-							{searchError && (
-								<div className="mt-2 text-xs text-red-500">{searchError}</div>
-							)}
-							{searchResults.length > 0 && (
-								<ul className="mt-2 space-y-1">
-									{searchResults.map((result) => (
-										<li key={`${result.lat}-${result.lon}`}>
-											<button
-												type="button"
-												className="w-full rounded-md border border-gray-200 bg-white px-2 py-1 text-left text-xs hover:bg-gray-100"
-												onClick={() => handleSelectSearchResult(result)}
-											>
-												{result.display_name}
-											</button>
-										</li>
-									))}
-								</ul>
-							)}
+				<div className="space-y-2">
+					<div>
+						<div className="flex flex-wrap gap-2">
+							<input
+								type="text"
+								value={searchQuery}
+								onChange={(event) => setSearchQuery(event.target.value)}
+								onKeyDown={(event) => {
+									if (event.key === "Enter") {
+										event.preventDefault();
+										handleSearchLocation();
+									}
+								}}
+								placeholder={t("searchPlaceholder")}
+								className="flex-1 min-w-[180px] rounded-md border border-gray-200 px-3 py-2 text-sm"
+							/>
+							<button
+								type="button"
+								className="px-3 py-2 text-sm rounded-md border border-gray-200 bg-white hover:bg-gray-50 disabled:text-gray-300"
+								onClick={handleSearchLocation}
+								disabled={isSearching}
+							>
+								{isSearching ? t("searching") : t("search")}
+							</button>
 						</div>
-
-						<div
-							ref={mapContainerRef}
-							className="h-120 w-full overflow-hidden rounded-lg border border-gray-200"
-						/>
-
-						{selectedPlaceLabel && (
-							<div className="text-xs text-gray-500">
-								{t("selectPlace", { placeName: selectedPlaceLabel })}
-							</div>
+						{searchError && (
+							<div className="mt-2 text-xs text-red-500">{searchError}</div>
 						)}
-						{locationError && (
-							<div className="text-xs text-red-500">{locationError}</div>
+						{searchResults.length > 0 && (
+							<ul className="mt-2 space-y-1">
+								{searchResults.map((result) => (
+									<li key={`${result.lat}-${result.lon}`}>
+										<button
+											type="button"
+											className="w-full rounded-md border border-gray-200 bg-white px-2 py-1 text-left text-xs hover:bg-gray-100"
+											onClick={() => handleSelectSearchResult(result)}
+										>
+											{result.display_name}
+										</button>
+									</li>
+								))}
+							</ul>
 						)}
 					</div>
-				)}
+
+					<div
+						ref={mapContainerRef}
+						className="h-120 w-full overflow-hidden rounded-lg border border-gray-200"
+					/>
+
+					{selectedPlaceLabel && (
+						<div className="text-xs text-gray-500">
+							{t("selectPlace", { placeName: selectedPlaceLabel })}
+						</div>
+					)}
+					{locationError && (
+						<div className="text-xs text-red-500">{locationError}</div>
+					)}
+				</div>
 			</div>
 
 			{/* Action Buttons */}
 			<div className="mt-auto space-y-3">
 				<button
 					type="button"
-					className="w-full py-3 bg-indigo-500 text-white rounded-lg font-medium flex items-center justify-center hover:bg-indigo-600 transition-colors"
+					className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-colors ${
+						isSubmitting
+							? "bg-gray-300 text-gray-500 cursor-not-allowed"
+							: "bg-indigo-500 text-white hover:bg-indigo-600"
+					}`}
 					onClick={handleSubmit}
+					disabled={isSubmitting}
 				>
-					💳 {t("postRequest")}
+					💳 {isSubmitting ? t("posting") : t("postRequest")}
 				</button>
 			</div>
 		</div>
