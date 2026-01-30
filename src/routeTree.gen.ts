@@ -16,7 +16,7 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyEmailTokenRouteImport } from './routes/verify-email.$token'
 import { Route as RequestNewRouteImport } from './routes/request.new'
-import { Route as PhotoRequestIdRouteImport } from './routes/photo.$requestId'
+import { Route as RequestRequestIdRouteImport } from './routes/request.$requestId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -54,9 +54,9 @@ const RequestNewRoute = RequestNewRouteImport.update({
   path: '/request/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PhotoRequestIdRoute = PhotoRequestIdRouteImport.update({
-  id: '/photo/$requestId',
-  path: '/photo/$requestId',
+const RequestRequestIdRoute = RequestRequestIdRouteImport.update({
+  id: '/request/$requestId',
+  path: '/request/$requestId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -66,7 +66,7 @@ export interface FileRoutesByFullPath {
   '/email-verification-required': typeof EmailVerificationRequiredRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/photo/$requestId': typeof PhotoRequestIdRoute
+  '/request/$requestId': typeof RequestRequestIdRoute
   '/request/new': typeof RequestNewRoute
   '/verify-email/$token': typeof VerifyEmailTokenRoute
 }
@@ -76,7 +76,7 @@ export interface FileRoutesByTo {
   '/email-verification-required': typeof EmailVerificationRequiredRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/photo/$requestId': typeof PhotoRequestIdRoute
+  '/request/$requestId': typeof RequestRequestIdRoute
   '/request/new': typeof RequestNewRoute
   '/verify-email/$token': typeof VerifyEmailTokenRoute
 }
@@ -87,7 +87,7 @@ export interface FileRoutesById {
   '/email-verification-required': typeof EmailVerificationRequiredRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/photo/$requestId': typeof PhotoRequestIdRoute
+  '/request/$requestId': typeof RequestRequestIdRoute
   '/request/new': typeof RequestNewRoute
   '/verify-email/$token': typeof VerifyEmailTokenRoute
 }
@@ -99,7 +99,7 @@ export interface FileRouteTypes {
     | '/email-verification-required'
     | '/signin'
     | '/signup'
-    | '/photo/$requestId'
+    | '/request/$requestId'
     | '/request/new'
     | '/verify-email/$token'
   fileRoutesByTo: FileRoutesByTo
@@ -109,7 +109,7 @@ export interface FileRouteTypes {
     | '/email-verification-required'
     | '/signin'
     | '/signup'
-    | '/photo/$requestId'
+    | '/request/$requestId'
     | '/request/new'
     | '/verify-email/$token'
   id:
@@ -119,7 +119,7 @@ export interface FileRouteTypes {
     | '/email-verification-required'
     | '/signin'
     | '/signup'
-    | '/photo/$requestId'
+    | '/request/$requestId'
     | '/request/new'
     | '/verify-email/$token'
   fileRoutesById: FileRoutesById
@@ -130,7 +130,7 @@ export interface RootRouteChildren {
   EmailVerificationRequiredRoute: typeof EmailVerificationRequiredRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  PhotoRequestIdRoute: typeof PhotoRequestIdRoute
+  RequestRequestIdRoute: typeof RequestRequestIdRoute
   RequestNewRoute: typeof RequestNewRoute
   VerifyEmailTokenRoute: typeof VerifyEmailTokenRoute
 }
@@ -186,11 +186,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RequestNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/photo/$requestId': {
-      id: '/photo/$requestId'
-      path: '/photo/$requestId'
-      fullPath: '/photo/$requestId'
-      preLoaderRoute: typeof PhotoRequestIdRouteImport
+    '/request/$requestId': {
+      id: '/request/$requestId'
+      path: '/request/$requestId'
+      fullPath: '/request/$requestId'
+      preLoaderRoute: typeof RequestRequestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -202,7 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailVerificationRequiredRoute: EmailVerificationRequiredRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  PhotoRequestIdRoute: PhotoRequestIdRoute,
+  RequestRequestIdRoute: RequestRequestIdRoute,
   RequestNewRoute: RequestNewRoute,
   VerifyEmailTokenRoute: VerifyEmailTokenRoute,
 }

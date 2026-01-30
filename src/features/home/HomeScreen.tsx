@@ -183,7 +183,7 @@ const HomeScreen: React.FC = () => {
 
 	const handleRequestSelect = (selected: Request) => {
 		navigate({
-			to: "/photo/$requestId",
+			to: "/request/$requestId",
 			params: { requestId: String(selected.id) },
 		});
 	};

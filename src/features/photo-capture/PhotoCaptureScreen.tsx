@@ -12,7 +12,7 @@ const PhotoCaptureScreen: React.FC = () => {
 	useAuthRedirect();
 
 	const navigate = useNavigate();
-	const { requestId } = useParams({ from: "/photo/$requestId" });
+	const { requestId } = useParams({ from: "/request/$requestId" });
 	const { showSnackbar } = useSnackbar();
 	const { t } = useTranslation();
 	const [isUploading, setIsUploading] = useState(false);
